@@ -1,0 +1,11 @@
+.number-input {
+    margin-left: 10px !important;
+}
+
+.MuiTableCell-root.MuiTableCell-head.MuiTableCell-alignCenter {
+    width: 700px !important;
+}
+
+.MuiTypography-body1 {
+    font-size: 0.6rem !important;
+}
