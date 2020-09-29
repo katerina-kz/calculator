@@ -1,51 +1,168 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import React, {useEffect, useState} from 'react';
 import ProjectFeaturesInputs from "./ProjectFeaturesInputs";
 import './styles.css';
-
-const useStyles = makeStyles({
-    table: {
-        minWidth: 650,
-    },
-});
-
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+import '../fonts/fonts.css'
+import Calculator from "./Calculator";
+import SalaryInputs from "./SalaryInputs";
 
 function MainTable() {
-    const classes = useStyles();
+
+    // project
+    const [projectName, setProjectName] = useState('');
+    const [platform, setPlatform] = useState({
+        "1": 0,
+        "2": 0,
+        "3": 0
+    });
+    const [platformInput, setPlatformInput] = useState(0);
+    const [buildingsCount, setBuildingsCount] = useState('Building total');
+    const [uniqueBuildings, setUniqueBuildings] = useState('Unique buildings');
+    const [uniqueApartment, setUniqueApartment] = useState('Unique apt.');
+    const [tourApartments, setTourApartments] = useState('Apt. tours');
+    const [tourAmenities, setTourAmenities] = useState('Amenities tours');
+    const [environmentComplexity, setEnvironmentComplexity] = useState('Rural landscape');
+    const [buildingComplexity, setBuildingComplexity] = useState("Simple geometrical shape");
+    const [furnishingComplexity, setFurnishingComplexity] = useState('Min');
+
+    // salary
+    const [visualizerSalaryInhouse, setVisualizerSalaryInhouse] = useState('');
+    const [visualizerSalaryOutsourse, setVisualizerSalaryOutsourse] = useState('');
+    const [designerSalaryInhouse, setDesignerSalaryInhouse] = useState('');
+    const [designerSalaryOutsourse, setDesignerSalaryOutsourse] = useState('');
+    const [modelerSalaryInhouse, setModelerSalaryInhouse] = useState('');
+    const [modelerSalaryOutsourse, setModelerSalaryOutsourse] = useState('');
+    const [developerSalaryInhouse, setDeveloperSalaryInhouse] = useState('');
+    const [developerSalaryOutsourse, setDeveloperSalaryOutsourse] = useState('');
+
+    const [loaderBlock, setLoaderBlock] = useState(true);
+    const [projectFeaturesBlock, setProjectFeaturesBlock] = useState(true);
+    const [calculateBlock, setCalculateBlock] = useState(false);
+    const [salaryBlock, setSalaryBlock] = useState(false);
+
+    useEffect(() => {
+        let evnArray = Object.values(platform);
+        let output = 0;
+        evnArray.forEach(el => setPlatformInput(output += el));
+    }, [platform])
+
+    const clickCalculate = () => {
+        setProjectFeaturesBlock(false);
+        setCalculateBlock(true);
+    };
+
+    const clearProjectInputs = () => {
+        setProjectName('');
+        setPlatform({
+            "1": 0,
+            "2": 0,
+            "3": 0
+        });
+        setPlatformInput(0);
+        setBuildingsCount('Building total');
+        setUniqueBuildings('Unique buildings');
+        setUniqueApartment('Unique apt.');
+        setTourApartments('Apt. tours');
+        setTourAmenities('Amenities tours');
+        setEnvironmentComplexity('Rural landscape');
+        setBuildingComplexity("Simple geometrical shape");
+        setFurnishingComplexity('Min');
+    }
+
 
     return (
-        <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center">Setting</TableCell>
-                        <TableCell align="center">Calculation</TableCell>
-                        <TableCell align="center">Salary</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                   <ProjectFeaturesInputs />
-                </TableBody>
-            </Table>
-        </TableContainer>
+        <>
+
+            <div className='table-root'>
+                {
+                    loaderBlock &&
+                    <div className="loader-block">
+                        <div className='loader-title'></div>
+                        <h3 className='loader-subtitle'>calculator</h3>
+                        <div className="loader-arrow"
+                             style={{
+                                 display: "none"
+                             }}>
+                        </div>
+                    </div>
+                }
+                {
+                    projectFeaturesBlock &&
+                    <ProjectFeaturesInputs options = {{
+                        projectName,
+                        platform,
+                        setProjectName,
+                        buildingsCount,
+                        buildingComplexity,
+                        uniqueApartment,
+                        uniqueBuildings,
+                        tourAmenities,
+                        tourApartments,
+                        environmentComplexity,
+                        furnishingComplexity,
+                        // environmentComplexityInput,
+                        platformInput,
+                        // buildingComplexityInput,
+                        // setBuildingComplexityInput,
+                        setPlatformInput,
+                        setFurnishingComplexity,
+                        // setEnvironmentComplexityInput,
+                        setPlatform,
+                        setBuildingsCount,
+                        setBuildingComplexity,
+                        setUniqueBuildings,
+                        setUniqueApartment,
+                        setTourAmenities,
+                        setTourApartments,
+                        setEnvironmentComplexity,}}
+                        click={clickCalculate}
+                        clear={clearProjectInputs}
+                    />
+                }
+                {   calculateBlock &&
+                    <Calculator options = {{
+                        projectName,
+                        platform,
+                        buildingsCount,
+                        buildingComplexity,
+                        uniqueApartment,
+                        uniqueBuildings,
+                        tourAmenities,
+                        tourApartments,
+                        platformInput,
+                        environmentComplexity,
+                        designerSalaryInhouse,
+                        designerSalaryOutsourse,
+                        visualizerSalaryInhouse,
+                        visualizerSalaryOutsourse,
+                        modelerSalaryInhouse,
+                        modelerSalaryOutsourse,
+                        developerSalaryInhouse,
+                        developerSalaryOutsourse,
+                    }}/>
+                }
+                {
+                    salaryBlock &&
+                    <SalaryInputs options = {{
+                    visualizerSalaryInhouse,
+                    visualizerSalaryOutsourse,
+                    designerSalaryInhouse,
+                    designerSalaryOutsourse,
+                    modelerSalaryInhouse,
+                    modelerSalaryOutsourse,
+                    developerSalaryInhouse,
+                    developerSalaryOutsourse,
+                    setVisualizerSalaryInhouse,
+                    setVisualizerSalaryOutsourse,
+                    setDesignerSalaryInhouse,
+                    setDesignerSalaryOutsourse,
+                    setModelerSalaryInhouse,
+                    setModelerSalaryOutsourse,
+                    setDeveloperSalaryInhouse,
+                    setDeveloperSalaryOutsourse
+                }}/>
+                }
+            </div>
+        </>
     );
 }
 
