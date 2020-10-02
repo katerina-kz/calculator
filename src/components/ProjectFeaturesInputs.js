@@ -1,15 +1,8 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import TextField from '@material-ui/core/TextField';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
+import React, {useEffect, useState} from 'react';
 
 function ProjectFeaturesInputs(props) {
     const { options, click, clear } = props;
-    const [isDisable, setIsDisable] = useState(true);
+    const [isDisable, setIsDisable] = useState(false); // change in production
 
     const onChangeProjectName = (e) => {
         options.setProjectName(e.target.value);
@@ -61,74 +54,62 @@ function ProjectFeaturesInputs(props) {
     }
 
     const handleDisabled = () => {
-        options.buildingsCount &&
-        options.uniqueBuildings &&
-        options.uniqueApartment &&
-        options.tourApartments &&
-        options.tourAmenities ? setIsDisable(false) : setIsDisable(true)
+        options.platformInput !== 0 &&
+        options.buildingsCount !== 'Building total' &&
+        options.uniqueBuildings !== 'Unique buildings' &&
+        options.uniqueApartment !== 'Unique apt.' &&
+        options.tourApartments !== 'Apt. tours' &&
+        options.tourAmenities !== 'Amenities tours' ? setIsDisable(false) : setIsDisable(true)
     };
 
-    console.log(isDisable);
+    const onBlurBuild = () => {
+         options.buildingsCount === '' ? options.setBuildingsCount('Building total') : options.setBuildingsCount(options.buildingsCount);
+         handleDisabled();
+    }
+
+    useEffect(() => {
+        if (options.totalDays) {
+            if ((0 <= options.totalDays) && (options.totalDays < 60)) {
+                document.querySelector('.setting-table').classList.remove('blue', 'yellow', 'red');
+                document.querySelector('.setting-table').classList.add('green');
+                document.querySelector('.arrow-square.calc').classList.remove('blue', 'yellow', 'red');
+                document.querySelector('.arrow-square.calc').classList.add('green');
+            } else if ((60 <= options.totalDays) && (options.totalDays < 150)) {
+                document.querySelector('.setting-table').classList.remove('green', 'yellow', 'red');
+                document.querySelector('.setting-table').classList.add('blue');
+                document.querySelector('.arrow-square.calc').classList.remove('green', 'yellow', 'red');
+                document.querySelector('.arrow-square.calc').classList.add('blue');
+            } else if ( (150 <= options.totalDays) && (options.totalDays < 300)) {
+                document.querySelector('.setting-table').classList.remove('blue', 'green', 'red');
+                document.querySelector('.setting-table').classList.add('yellow');
+                document.querySelector('.arrow-square.calc').classList.remove('blue', 'green', 'red');
+                document.querySelector('.arrow-square.calc').classList.add('yellow');
+            } else if (300 <= options.totalDays) {
+                document.querySelector('.setting-table').classList.remove('blue', 'yellow', 'green');
+                document.querySelector('.setting-table').classList.add('red');
+                document.querySelector('.arrow-square.calc').classList.remove('blue', 'yellow', 'green');
+                document.querySelector('.arrow-square.calc').classList.add('red');
+            }
+        }
+    }, [options.totalDays])
+
     return (
         <div className="setting-table column">
-            {/*<div className='settings-table_title column-title'>*/}
-            {/*    Project Setting*/}
-            {/*</div>*/}
-            {/*<div className='settings-table_block_title block-title'>*/}
-            {/*    <div className="settings-table_name">Name</div>*/}
-            {/*    <div className="settings-table_check">Check</div>*/}
-            {/*</div>*/}
             <div className="settings-table_block ">
-                {/*<div className="settings-table_item">*/}
-                {/*    /!*<div className="settings-table_item-name" >Project Name</div>*!/*/}
-                {/*    <div className="settings-table_item-input" >*/}
-                {/*        <TextField id="outlined-basic" label="Set name" variant="outlined" value={options.projectName} onChange={onChangeProjectName} />*/}
-                {/*    </div>*/}
-                {/*</div>*/}
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">Platforms</div>
                     <div className="settings-table_item-input">
-                            <input className='platform-input' type='checkbox' value='left' id='id-web' name={"1"} onChange={onChangePlatform}/>
-                            <label htmlFor='id-web' className='platform-input-label web-label' />
+                        <input className='platform-input' type='checkbox' value='left' id='id-web' name={"1"}
+                               onChange={onChangePlatform}/>
+                        <label htmlFor='id-web' className='platform-input-label web-label'/>
 
-                            <input className='platform-input' type='checkbox' value='left' id='id-mobile' name={"2"} onChange={onChangePlatform}/>
-                            <label htmlFor='id-mobile' className='platform-input-label mobile-label' />
+                        <input className='platform-input' type='checkbox' value='left' id='id-mobile' name={"2"}
+                               onChange={onChangePlatform}/>
+                        <label htmlFor='id-mobile' className='platform-input-label mobile-label'/>
 
-                            <input className='platform-input' type='checkbox' value='left' id='id-desktop' name={"3"} onChange={onChangePlatform}/>
-                            <label htmlFor='id-desktop' className='platform-input-label desktop-label' />
-                        {/*<FormControl component="fieldset">*/}
-                        {/*    <FormGroup aria-label="position" row>*/}
-                        {/*        <Checkbox*/}
-                        {/*            value="left"*/}
-                        {/*            // control={<Checkbox color="primary"/>}*/}
-                        {/*            label="Web"*/}
-                        {/*            name={"1"}*/}
-                        {/*            onChange={onChangePlatform}*/}
-                        {/*        />*/}
-                        {/*    </FormGroup>*/}
-                        {/*</FormControl>*/}
-                        {/*<FormControl component="fieldset">*/}
-                        {/*    <FormGroup aria-label="position" row>*/}
-                        {/*        <Checkbox*/}
-                        {/*            value="left"*/}
-                        {/*            control={<Checkbox color="primary"/>}*/}
-                        {/*            label="Mobile"*/}
-                        {/*            name={"2"}*/}
-                        {/*            onChange={onChangePlatform}*/}
-                        {/*        />*/}
-                        {/*    </FormGroup>*/}
-                        {/*</FormControl>*/}
-                        {/*<FormControl component="fieldset">*/}
-                        {/*    <FormGroup aria-label="position" row>*/}
-                        {/*        <Checkbox*/}
-                        {/*            value="left"*/}
-                        {/*            control={<Checkbox color="primary"/>}*/}
-                        {/*            label="Desktop"*/}
-                        {/*            name={"3"}*/}
-                        {/*            onChange={onChangePlatform}*/}
-                        {/*        />*/}
-                        {/*    </FormGroup>*/}
-                        {/*</FormControl>*/}
+                        <input className='platform-input' type='checkbox' value='left' id='id-desktop' name={"3"}
+                               onChange={onChangePlatform}/>
+                        <label htmlFor='id-desktop' className='platform-input-label desktop-label' />
                     </div>
                 </div>
                 <div className="settings-table_item">
@@ -139,8 +120,9 @@ function ProjectFeaturesInputs(props) {
                             type='text'
                             id='id-building-total'
                             value={options.buildingsCount}
-                            onClick={() => options.setBuildingsCount('')}
+                            onClick={() => isNaN(options.buildingsCount) ? options.setBuildingsCount('') : options.setBuildingsCount(options.buildingsCount)}
                             onBlur={() => options.buildingsCount === '' ? options.setBuildingsCount('Building total') : options.setBuildingsCount(options.buildingsCount)}
+                            // onBlur={onBlurBuild}
                             onChange={onChangeBuildingCount}
                         />
                         <input
@@ -148,7 +130,7 @@ function ProjectFeaturesInputs(props) {
                             type='text'
                             id='id-building-total'
                             value={options.uniqueBuildings}
-                            onClick={() => options.setUniqueBuildings('')}
+                            onClick={() => isNaN(options.uniqueBuildings) ? options.setUniqueBuildings('') : options.setUniqueBuildings(options.uniqueBuildings)}
                             onBlur={() => options.uniqueBuildings === '' ? options.setUniqueBuildings('Unique buildings') : options.setUniqueBuildings(options.uniqueBuildings)}
                             onChange={onChangeUniqueBuildings}
                         />
@@ -157,31 +139,10 @@ function ProjectFeaturesInputs(props) {
                             type='text'
                             id='id-building-total'
                             value={options.uniqueApartment}
-                            onClick={() => options.setUniqueApartment('')}
+                            onClick={() => isNaN(options.uniqueApartment) ? options.setUniqueApartment('') : options.setUniqueApartment(options.uniqueApartment)}
                             onBlur={() => options.uniqueApartment === '' ?  options.setUniqueApartment('Unique apt.') : options.setUniqueApartment(options.uniqueApartment)}
                             onChange={onChangeUniqueApartment}
                         />
-                        {/*<label for='id-building-total' className='building-total-input-label'/>*/}
-                        {/*<TextField*/}
-                        {/*    className='number-input'*/}
-                        {/*    label="Number"*/}
-                        {/*    min={0}*/}
-                        {/*    type="number"*/}
-                        {/*    id="outlined-size-small"*/}
-                        {/*    variant="outlined"*/}
-                        {/*    size="small"*/}
-                        {/*    placeholder='Buildings total'*/}
-                        {/*    InputLabelProps={{*/}
-                        {/*        shrink: true,*/}
-                        {/*    }}*/}
-                        {/*    InputProps={{*/}
-                        {/*        inputProps: {*/}
-                        {/*            min: 0*/}
-                        {/*        }*/}
-                        {/*    }}*/}
-                        {/*    value={options.buildingsCount}*/}
-                        {/*    onChange={onChangeBuildingCount}*/}
-                        {/*/>*/}
                     </div>
                 </div>
                 <div className="settings-table_item">
@@ -201,65 +162,8 @@ function ProjectFeaturesInputs(props) {
                             <input className='general-input facade-complexity-input facade-complexity-input_right' type="radio" id="facade-complexity-max" name="facade-complexity" value="Baroque edifice" onChange={onChangeBuildingComplexity} checked={options.buildingComplexity === "Baroque edifice"}/>
                             <label className='general-label facade-complexity-label facade-complexity-label_right' htmlFor="facade-complexity-max">Baroque edifice</label>
                         </div>
-                        {/*<FormControl component="fieldset">*/}
-                        {/*    <RadioGroup className='facade-complexity' value={options.buildingComplexity} onChange={onChangeBuildingComplexity}>*/}
-                        {/*        <FormControlLabel className='building-complexity_input building-complexity_input-left' value="Simple geometrical shape" control={<Radio color="primary"/>}*/}
-                        {/*                          label="Simple geometrical shape"/>*/}
-                        {/*        <FormControlLabel className='building-complexity_input building-complexity_input-center' value="Moderately complex exterior" control={<Radio color="primary"/>}*/}
-                        {/*                          label="Moderately complex exterior"/>*/}
-                        {/*        <FormControlLabel className='building-complexity_input building-complexity_input-right' value="Baroque edifice" control={<Radio color="primary"/>}*/}
-                        {/*                          label="Baroque edifice"/>*/}
-                        {/*    </RadioGroup>*/}
-                        {/*</FormControl>*/}
                     </div>
                 </div>
-                {/*<div className="settings-table_item">*/}
-                {/*    <div className="settings-table_item-name">Unique buildings count</div>*/}
-                {/*    <div className="settings-table_item-input">*/}
-                {/*        <TextField*/}
-                {/*            className='number-input'*/}
-                {/*            label="Number"*/}
-                {/*            type="number"*/}
-                {/*            id="outlined-size-small"*/}
-                {/*            variant="outlined"*/}
-                {/*            size="small"*/}
-                {/*            value={options.uniqueBuildings}*/}
-                {/*            // onBlur={handleOnblur()}*/}
-                {/*            onChange={onChangeUniqueBuildings}*/}
-                {/*            InputLabelProps={{*/}
-                {/*                shrink: true,*/}
-                {/*            }}*/}
-                {/*            InputProps={{*/}
-                {/*                inputProps: {*/}
-                {/*                    min: 0*/}
-                {/*                }*/}
-                {/*            }}*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*</div>*/}
-                {/*<div className="settings-table_item">*/}
-                {/*    <div className="settings-table_item-name">Unique apartment count</div>*/}
-                {/*    <div className="settings-table_item-input">*/}
-                {/*        <TextField*/}
-                {/*            className='number-input'*/}
-                {/*            label="Number"*/}
-                {/*            type="number"*/}
-                {/*            id="outlined-size-small"*/}
-                {/*            variant="outlined"*/}
-                {/*            size="small"*/}
-                {/*            value={options.uniqueApartment}*/}
-                {/*            onChange={onChangeUniqueApartment}*/}
-                {/*            InputLabelProps={{*/}
-                {/*                shrink: true,*/}
-                {/*            }}*/}
-                {/*            InputProps={{*/}
-                {/*                inputProps: {*/}
-                {/*                    min: 0*/}
-                {/*                }*/}
-                {/*            }}*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*</div>*/}
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">360 tours</div>
                     <div className="settings-table_item-input tour-block-360">
@@ -268,7 +172,7 @@ function ProjectFeaturesInputs(props) {
                             type='text'
                             id='id-tour-ap'
                             value={options.tourApartments}
-                            onClick={() => options.setTourApartments('')}
+                            onClick={() => isNaN(options.tourApartments) ? options.setTourApartments('') : options.setTourApartments(options.tourApartments)}
                             onBlur={() => options.tourApartments === '' ? options.setTourApartments('Apt. tours') : options.setTourApartments(options.tourApartments)}
                             onChange={onChangeTourApartments}
                         />
@@ -277,79 +181,12 @@ function ProjectFeaturesInputs(props) {
                             type='text'
                             id='id-tour-am'
                             value={options.tourAmenities}
-                            onClick={() => options.setTourAmenities('')}
+                            onClick={() => isNaN(options.tourAmenities) ? options.setTourAmenities('') : options.setTourAmenities(options.tourAmenities)}
                             onBlur={() => options.tourAmenities === '' ? options.setTourAmenities('Amenities tours') : options.setTourAmenities(options.tourAmenities)}
                             onChange={onChangeTourAmenities}
                         />
-                        {/*<label for='id-building-total' className='building-total-input-label'/>*/}
-                        {/*<TextField*/}
-                        {/*    className='number-input'*/}
-                        {/*    label="Number"*/}
-                        {/*    min={0}*/}
-                        {/*    type="number"*/}
-                        {/*    id="outlined-size-small"*/}
-                        {/*    variant="outlined"*/}
-                        {/*    size="small"*/}
-                        {/*    placeholder='Buildings total'*/}
-                        {/*    InputLabelProps={{*/}
-                        {/*        shrink: true,*/}
-                        {/*    }}*/}
-                        {/*    InputProps={{*/}
-                        {/*        inputProps: {*/}
-                        {/*            min: 0*/}
-                        {/*        }*/}
-                        {/*    }}*/}
-                        {/*    value={options.buildingsCount}*/}
-                        {/*    onChange={onChangeBuildingCount}*/}
-                        {/*/>*/}
                     </div>
                 </div>
-                {/*<div className="settings-table_item">*/}
-                {/*    <div className="settings-table_item-name">360-tours count - apartments</div>*/}
-                {/*    <div className="settings-table_item-input">*/}
-                {/*        <TextField*/}
-                {/*            className='number-input'*/}
-                {/*            label="Number"*/}
-                {/*            type="number"*/}
-                {/*            id="outlined-size-small"*/}
-                {/*            variant="outlined"*/}
-                {/*            size="small"*/}
-                {/*            value={options.tourApartments}*/}
-                {/*            onChange={onChangeTourApartments}*/}
-                {/*            InputLabelProps={{*/}
-                {/*                shrink: true,*/}
-                {/*            }}*/}
-                {/*            InputProps={{*/}
-                {/*                inputProps: {*/}
-                {/*                    min: 0*/}
-                {/*                }*/}
-                {/*            }}*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*</div>*/}
-                {/*<div className="settings-table_item">*/}
-                {/*    <div className="settings-table_item-name">360-tours count - amenities</div>*/}
-                {/*    <div className="settings-table_item-input">*/}
-                {/*        <TextField*/}
-                {/*            className='number-input'*/}
-                {/*            label="Number"*/}
-                {/*            type="number"*/}
-                {/*            id="outlined-size-small"*/}
-                {/*            variant="outlined"*/}
-                {/*            size="small"*/}
-                {/*            value={options.tourAmenities}*/}
-                {/*            onChange={onChangeTourAmenities}*/}
-                {/*            InputLabelProps={{*/}
-                {/*                shrink: true,*/}
-                {/*            }}*/}
-                {/*            InputProps={{*/}
-                {/*                inputProps: {*/}
-                {/*                    min: 0*/}
-                {/*                }*/}
-                {/*            }}*/}
-                {/*        />*/}
-                {/*    </div>*/}
-                {/*</div>*/}
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">Furnishing complexity</div>
                     {/*dont have functional yet */}
@@ -426,30 +263,18 @@ function ProjectFeaturesInputs(props) {
                         </div>
                     </div>
                 </div>
-                {/*<div className="settings-table_item">*/}
-                {/*    <div className="settings-table_item-name">Environment complexity</div>*/}
-                {/*    <div className="settings-table_item-input">*/}
-                {/*        <FormControl component="fieldset">*/}
-                {/*            <RadioGroup value={options.environmentComplexity} onChange={onChangeEnvironmentComplexity}>*/}
-                {/*                <FormControlLabel value="Rural landscape" control={<Radio color="primary"/>}*/}
-                {/*                                  label="Rural landscape"/>*/}
-                {/*                <FormControlLabel value="Low town" control={<Radio color="primary"/>}*/}
-                {/*                                  label="Low town"/>*/}
-                {/*                <FormControlLabel value="Dense city" control={<Radio color="primary"/>}*/}
-                {/*                                  label="Dense city"/>*/}
-                {/*            </RadioGroup>*/}
-                {/*        </FormControl>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
                 <div className='actions-block'>
                     <div className='clear-box'>
                         <button className='clear-button reset-button_styles' onClick={clear}>Clear</button>
                     </div>
-                    <div className='calculate-box' >
-                        <button className='calculate-button reset-button_styles' disabled={isDisable} onClick={click}>
-                            <span>Calculate</span>
-                        </button>
-                    </div>
+                    {
+                        options.loaderBlock &&
+                        <div className='calculate-box' >
+                            <button className='calculate-button reset-button_styles' disabled={isDisable} onClick={click}>
+                                <span>Calculate</span>
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

@@ -41,6 +41,25 @@
     src: url("../fonts/fragolino/FragolinoCondBold.eot") format("embedded-opentype");
     src: url("../fonts/fragolino/FragolinoCondBold.eot?#iefix") format("embedded-opentype"), url("../fonts/fragolino/FragolinoCondBold.woff2") format("woff2"), url("../fonts/fragolino/FragolinoCondBold.ttf") format("truetype"); }
 
+body {
+    box-sizing: border-box;
+    font-family: 'fragolino';
+}
+
+.arrow-square {
+    width: 32px;
+    height: 32px;
+    background-color: #fff;
+    transform: rotate(45deg);
+    position: absolute;
+    top: calc(50% - 16px);
+    left: calc(50% - 16px);
+}
+
+.arrow-square.calc {
+    background-color: #F2C94C;
+}
+
 .column-title {
     font-weight: 700;
     text-transform: uppercase;
@@ -102,11 +121,11 @@
 }
 
 .calculator-table_row {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 }
 
 .effort {
-    grid-column: 2 / 3;
+    grid-column: 1 / 3;
     font-size: 12px;
 }
 
@@ -114,22 +133,49 @@
     margin-right: 5px;
 }
 
-.calculator-table_item {
-    text-align: center;
+.table-root {
+    display: block;
+    margin: 0 auto;
+    height: 100vh;
+    position: relative;
 }
 
-.table-root {
+.table-root_grid {
+    margin: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 100vh;
 }
 
 /*loader styles*/
 
 .loader-block {
+    height: 100%;
     display: grid;
     place-content: center;
     text-align: center;
+}
+
+.transition-left {
+    transform: translateX(-25%);
+    transition: 0.7s;
+}
+
+.opacity-calc {
+    opacity: 1 !important;
+    /*transition: 0.7s;*/
+}
+
+.transition-left-calc {
+    position: relative !important;
+    left: 0 !important;
+    right: initial !important;
+    /*transform: translateX(-100%);*/
+    transition: 0.7s !important;
+}
+
+.transition-right {
+    transform: translateX(100%);
+    /*transition: 0.7s;*/
 }
 
 .loader-title {
@@ -153,7 +199,8 @@
     background-image: url("../images/loader-arrow.svg");
     width: 32px;
     height: 32px;
-    display: block !important;
+    display: block;
+    opacity: 0;
     margin: 0 auto;
     margin-top: 120px;
 }
@@ -162,7 +209,16 @@
 
 .setting-table {
     background-color: #F2C94C;
-    padding: 30px 110px;
+    padding: 130px 110px;
+    opacity: 0;
+    position: relative;
+    right: 0;
+    /*height: 100vh;*/
+}
+
+.settings-table_block {
+    /*width: 505px;*/
+    margin: 0 auto;
 }
 
 .settings-table_item-name {
@@ -249,7 +305,7 @@
     border: 1px solid #000;
     color: black;
     font-family: 'fragolino';
-    font-weight: 300;
+    font-weight: 400;
     font-size: 12px;
     line-height: 15px;
 }
@@ -366,7 +422,7 @@
     height: 16px;
     border: 1px solid #000;
     border-radius: 50%;
-    background-color: #F2C94C;
+    background-color: transparent;
 }
 
 .facade-complexity-label_center::after {
@@ -374,7 +430,7 @@
 }
 
 .facade-complexity-label_right::after {
-    right: 0;
+    right: -2px;
 }
 
 .facade-complexity-input:checked + .facade-complexity-label {
@@ -418,7 +474,7 @@
 }
 
 .furnishing-complexity-label_right::after {
-    right: 0;
+    right: -2px;
 }
 
 .furnishing-complexity-input:checked + .furnishing-complexity-label {
@@ -451,7 +507,7 @@
 }
 
 .environment-complexity-label_right::after {
-    right: 0;
+    right: -2px;
 }
 
 .environment-complexity-input:checked + .environment-complexity-label {
@@ -480,8 +536,10 @@
 }
 
 
-/* buttons in project features block */
-.actions-block {
+/*********** buttons in project features block ***********/
+
+.actions-block,
+.actions-calc_block {
     margin-top: 40px;
     display: flex;
     justify-content: space-between;
@@ -504,7 +562,7 @@
     cursor: pointer;
 }
 
-.clear-button:focus {
+button:focus {
     outline: none;
 }
 
@@ -523,7 +581,6 @@
     display: block;
     font-weight: 700;
     cursor: pointer;
-    /*align-self: center;*/
     width: 160px;
     height: 36px;
     color: #fff;
@@ -536,7 +593,272 @@
     cursor: auto;
 }
 
+/*********** buttons in calculate block ***********/
+
+.adjust-salary-button {
+    text-decoration: underline;
+    padding-left: 36px;
+    line-height: 24px;
+    position: relative;
+    cursor: pointer;
+}
+
+.adjust-salary-button::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    left: 0;
+    top: 0;
+    background-image: url("../images/pencil.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+/************* buttons in popup ***************/
+
+.popup-actions {
+    padding: 0 20px;
+}
+
+.close-button {
+    color: #000000;
+}
 
 
 
+/************  CALC Styles ************/
 
+.calculator-table {
+    padding: 130px 110px;
+}
+
+.total-block {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 59px;
+}
+
+.total-days-box {
+    display: flex;
+    flex-direction: column;
+    padding-left: 48px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.total-days-box::after {
+    position: absolute;
+    content: '';
+    width: 32px;
+    height: 32px;
+    background-image: url("../images/calendar.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    top: 23px;
+    left: 0;
+}
+
+.month-text {
+    font-family: 'fragolino';
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 31px;
+    letter-spacing: 0.03em;
+}
+
+.month-text-int {
+    font-family: 'fragolino';
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 38px;
+    letter-spacing: 0.03em;
+}
+
+.calculator-days-amount {
+    font-family: 'fragolino';
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 23px;
+    /* identical to box height */
+
+    letter-spacing: 0.03em;
+}
+
+.total-cost {
+    font-family: 'fragolino';
+    font-weight: 700;
+    font-size: 72px;
+    line-height: 92px;
+    text-align: center;
+    letter-spacing: 0.03em;
+}
+
+.calculator-table_item-title {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 23px;
+    letter-spacing: 0.03em;
+}
+
+.calculator-table_block {
+    margin-top: 32px;
+}
+
+.calculator-table_item.days {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.03em;
+    text-align: right;
+ }
+
+.calculator-table_item.cost {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.03em;
+    text-align: right;
+}
+
+.total-row {
+    border-top: 1px solid #000;
+    padding-top: 20px;
+    margin-top: 15px;
+}
+
+.calculator-table_item.effort {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.03em;
+}
+
+.calculator-table_row.first-row {
+    margin-top: 15px;
+}
+
+/*************** outsource checkbox ***************/
+.calculator-table_item.outsource {
+    text-align: right;
+    position: relative;
+}
+
+.outsource-input {
+    position: relative;
+    opacity: 0;
+}
+
+.outsource-input-label::after {
+    z-index: 2;
+    display: block;
+    position: absolute;
+    content: '';
+    top: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    background-image: url("../images/dollar.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    filter: saturate(0);
+    opacity: 0.2;
+}
+
+
+.outsource-input:checked + .outsource-input-label {
+    color: #fff;
+}
+
+.outsource-input:checked + .outsource-input-label::after {
+    filter: saturate(1);
+    opacity: 1;
+}
+
+
+/********************************* BREAKPOINTS *******************************************/
+
+/* make smaller height of screen*/
+@media (max-height: 846px) {
+
+    .setting-table {
+        padding: 30px 110px;
+    }
+
+    .calculator-table {
+        padding: 20px 110px;
+    }
+
+    .settings-table_item-input {
+        margin-top: 10px;
+    }
+
+    .settings-table_item:not(:first-of-type) {
+        margin-top: 30px;
+    }
+
+    .actions-block {
+        margin-top: 40px;
+    }
+
+    .total-block {
+        margin-bottom: 15px;
+    }
+
+    .calculator-table_block {
+        margin-top: 10px;
+    }
+
+    .calculator-table_row.first-row {
+        margin-top: 5px;
+    }
+
+    .total-row {
+        padding-top: 15px;
+        margin-top: 10px;
+    }
+
+    .actions-calc_block {
+        margin-top: 20px;
+    }
+}
+
+.none {
+     display: none;
+ }
+
+.block {
+    opacity: 1;
+    transition: 0.5s;
+}
+
+/**************** background colors *******************/
+
+.green {
+     background-color: rgba(60,173,73,1) !important;
+    transition: 1s;
+ }
+
+.blue {
+    background-color: rgba(56,116,163,1) !important;
+    transition: 1s;
+}
+
+.red {
+    background-color: rgba(213,29,84,1) !important;
+    transition: 1s;
+}
+
+.yellow {
+    background-color: rgba(224,177,40,1) !important;
+    transition: 1s;
+}
+
+
+/**************** popup *******************/
+
+.calculator-table + div {
+    display: none;
+}

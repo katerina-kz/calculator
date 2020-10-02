@@ -4,50 +4,126 @@ import './styles.css';
 import '../fonts/fonts.css'
 import Calculator from "./Calculator";
 import SalaryInputs from "./SalaryInputs";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import { useDataFromStorage } from "./hooks/useDataFromStorage";
+import { useGlobalObject } from "./hooks/useGlobalObject";
 
 function MainTable() {
 
     // project
     const [projectName, setProjectName] = useState('');
-    const [platform, setPlatform] = useState({
+    const [platform, setPlatform] = useLocalStorage('platform', {
         "1": 0,
         "2": 0,
         "3": 0
     });
-    const [platformInput, setPlatformInput] = useState(0);
-    const [buildingsCount, setBuildingsCount] = useState('Building total');
-    const [uniqueBuildings, setUniqueBuildings] = useState('Unique buildings');
-    const [uniqueApartment, setUniqueApartment] = useState('Unique apt.');
-    const [tourApartments, setTourApartments] = useState('Apt. tours');
-    const [tourAmenities, setTourAmenities] = useState('Amenities tours');
-    const [environmentComplexity, setEnvironmentComplexity] = useState('Rural landscape');
-    const [buildingComplexity, setBuildingComplexity] = useState("Simple geometrical shape");
-    const [furnishingComplexity, setFurnishingComplexity] = useState('Min');
+    const [platformInput, setPlatformInput] = useState( 0);
+    const [buildingsCount, setBuildingsCount] = useLocalStorage('Building total', 'Building total');
+    const [uniqueBuildings, setUniqueBuildings] = useLocalStorage('Unique buildings', 'Unique buildings');
+    const [uniqueApartment, setUniqueApartment] = useLocalStorage('Unique apt.','Unique apt.');
+    const [tourApartments, setTourApartments] = useLocalStorage('Apt. tours', 'Apt. tours');
+    const [tourAmenities, setTourAmenities] = useLocalStorage('Amenities tours', 'Amenities tours');
+    const [environmentComplexity, setEnvironmentComplexity] = useLocalStorage('Environment Complexity', 'Rural landscape');
+    const [buildingComplexity, setBuildingComplexity] = useLocalStorage("Building Complexity", "Simple geometrical shape");
+    const [furnishingComplexity, setFurnishingComplexity] = useLocalStorage('Furnishing Complexity', 'Min');
 
     // salary
-    const [visualizerSalaryInhouse, setVisualizerSalaryInhouse] = useState('');
-    const [visualizerSalaryOutsourse, setVisualizerSalaryOutsourse] = useState('');
-    const [designerSalaryInhouse, setDesignerSalaryInhouse] = useState('');
-    const [designerSalaryOutsourse, setDesignerSalaryOutsourse] = useState('');
-    const [modelerSalaryInhouse, setModelerSalaryInhouse] = useState('');
-    const [modelerSalaryOutsourse, setModelerSalaryOutsourse] = useState('');
-    const [developerSalaryInhouse, setDeveloperSalaryInhouse] = useState('');
-    const [developerSalaryOutsourse, setDeveloperSalaryOutsourse] = useState('');
+    const [visualizerSalaryInhouse, setVisualizerSalaryInhouse] = useLocalStorage('Visualizer Salary Inhouse', '');
+    const [visualizerSalaryOutsource, setVisualizerSalaryOutsource] = useLocalStorage('Visualizer Salary Outsource', '');
+    const [designerSalaryInhouse, setDesignerSalaryInhouse] = useLocalStorage('Designer Salary Inhouse', '');
+    const [designerSalaryOutsource, setDesignerSalaryOutsource] = useLocalStorage('Designer Salary Outsource', '');
+    const [modelerSalaryInhouse, setModelerSalaryInhouse] = useLocalStorage('Modeler Salary Inhouse', '');
+    const [modelerSalaryOutsource, setModelerSalaryOutsource] = useLocalStorage('Modeler Salary Outsource', '');
+    const [developerSalaryInhouse, setDeveloperSalaryInhouse] = useLocalStorage('Developer Salary Inhouse', '');
+    const [developerSalaryOutsource, setDeveloperSalaryOutsource] = useLocalStorage('Developer Salary Outsource', '');
 
     const [loaderBlock, setLoaderBlock] = useState(true);
-    const [projectFeaturesBlock, setProjectFeaturesBlock] = useState(true);
-    const [calculateBlock, setCalculateBlock] = useState(false);
-    const [salaryBlock, setSalaryBlock] = useState(false);
+    const [projectFeaturesBlock, setProjectFeaturesBlock] = useState(false);
+    const [calculateBlock, setCalculateBlock] = useState(true);
+    const [salaryBlock, setSalaryBlock] = useState(true);
+
+    const [totalDays, setTotalDays] = useState(0);
+
+    const [isOutsource, setIsOutSource] = useState({
+        "Building count": 0,
+        "360-tours count - apartments": 0,
+        "360-tours count - amenities": 0,
+        "Environment complexity": 0,
+        // "5": 0,
+        // "6": 0,
+        // "7": 0
+    });
+
+    // -------------- fetch from localstorage --------------- //
+
+    // const data = useDataFromStorage();
+
+    // ----- Modal popup -------//
+
+    const [ isModalVisible, setIsModalVisible ] = useState(false);
+
+    // --------------------------- loader loading --------------------------- //
 
     useEffect(() => {
+
         let evnArray = Object.values(platform);
         let output = 0;
+        // debugger
         evnArray.forEach(el => setPlatformInput(output += el));
     }, [platform])
 
+    useEffect(() => {
+        setTimeout(() => {
+            document.querySelector('.loader-arrow').classList.add('block');
+        }, 300);
+    }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            document.querySelector('.loader-block').classList.add('transition-left');
+        }, 800);
+    }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            document.querySelector('.loader-block').classList.remove('transition-left');
+            document.querySelector('.table-root').classList.add('table-root_grid');
+        }, 1500);
+
+    }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setProjectFeaturesBlock(true);
+        }, 1800);
+
+    }, [projectFeaturesBlock]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            document.querySelector('.setting-table').classList.add('block');
+        }, 2000);
+
+    }, []);
+
+
+    // --------------------------- CALC loading --------------------------- //
+
+
     const clickCalculate = () => {
-        setProjectFeaturesBlock(false);
-        setCalculateBlock(true);
+        document.querySelector('.setting-table').classList.add('transition-left-calc', 'opacity-calc');
+        document.querySelector('.setting-table').classList.remove('block');
+
+        // setTimeout(() => {
+            // debugger
+            document.querySelector('.setting-table').classList.remove('transition-left-calc');
+
+            setLoaderBlock(false);
+
+            // setCalculateBlock(true);
+            document.querySelector('.calculator-table').classList.remove('none');
+
+        // }, 900);
     };
 
     const clearProjectInputs = () => {
@@ -76,13 +152,10 @@ function MainTable() {
                 {
                     loaderBlock &&
                     <div className="loader-block">
+                        <span className='arrow-square loader'></span>
                         <div className='loader-title'></div>
                         <h3 className='loader-subtitle'>calculator</h3>
-                        <div className="loader-arrow"
-                             style={{
-                                 display: "none"
-                             }}>
-                        </div>
+                        <div className="loader-arrow"></div>
                     </div>
                 }
                 {
@@ -99,13 +172,9 @@ function MainTable() {
                         tourApartments,
                         environmentComplexity,
                         furnishingComplexity,
-                        // environmentComplexityInput,
                         platformInput,
-                        // buildingComplexityInput,
-                        // setBuildingComplexityInput,
                         setPlatformInput,
                         setFurnishingComplexity,
-                        // setEnvironmentComplexityInput,
                         setPlatform,
                         setBuildingsCount,
                         setBuildingComplexity,
@@ -113,7 +182,10 @@ function MainTable() {
                         setUniqueApartment,
                         setTourAmenities,
                         setTourApartments,
-                        setEnvironmentComplexity,}}
+                        setEnvironmentComplexity,
+                        loaderBlock,
+                        totalDays,
+                        setTotalDays}}
                         click={clickCalculate}
                         clear={clearProjectInputs}
                     />
@@ -131,34 +203,44 @@ function MainTable() {
                         platformInput,
                         environmentComplexity,
                         designerSalaryInhouse,
-                        designerSalaryOutsourse,
+                        designerSalaryOutsource,
                         visualizerSalaryInhouse,
-                        visualizerSalaryOutsourse,
+                        visualizerSalaryOutsource,
                         modelerSalaryInhouse,
-                        modelerSalaryOutsourse,
+                        modelerSalaryOutsource,
                         developerSalaryInhouse,
-                        developerSalaryOutsourse,
+                        developerSalaryOutsource,
+                        isModalVisible,
+                        setIsModalVisible,
+                        totalDays,
+                        setTotalDays,
+                        isOutsource,
+                        setIsOutSource,
                     }}/>
                 }
                 {
                     salaryBlock &&
                     <SalaryInputs options = {{
-                    visualizerSalaryInhouse,
-                    visualizerSalaryOutsourse,
-                    designerSalaryInhouse,
-                    designerSalaryOutsourse,
-                    modelerSalaryInhouse,
-                    modelerSalaryOutsourse,
-                    developerSalaryInhouse,
-                    developerSalaryOutsourse,
-                    setVisualizerSalaryInhouse,
-                    setVisualizerSalaryOutsourse,
-                    setDesignerSalaryInhouse,
-                    setDesignerSalaryOutsourse,
-                    setModelerSalaryInhouse,
-                    setModelerSalaryOutsourse,
-                    setDeveloperSalaryInhouse,
-                    setDeveloperSalaryOutsourse
+                        visualizerSalaryInhouse,
+                        visualizerSalaryOutsource,
+                        designerSalaryInhouse,
+                        designerSalaryOutsource,
+                        modelerSalaryInhouse,
+                        modelerSalaryOutsource,
+                        developerSalaryInhouse,
+                        developerSalaryOutsource,
+                        setVisualizerSalaryInhouse,
+                        setVisualizerSalaryOutsource,
+                        setDesignerSalaryInhouse,
+                        setDesignerSalaryOutsource,
+                        setModelerSalaryInhouse,
+                        setModelerSalaryOutsource,
+                        setDeveloperSalaryInhouse,
+                        setDeveloperSalaryOutsource,
+                        isModalVisible,
+                        setIsModalVisible,
+                        isOutsource,
+                        setIsOutSource,
                 }}/>
                 }
             </div>
