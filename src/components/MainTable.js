@@ -25,7 +25,7 @@ function MainTable() {
     const [tourAmenities, setTourAmenities] = useLocalStorage('Amenities tours', 'Amenities tours');
     const [environmentComplexity, setEnvironmentComplexity] = useLocalStorage('Environment Complexity', 'Rural landscape');
     const [buildingComplexity, setBuildingComplexity] = useLocalStorage("Building Complexity", "Simple geometrical shape");
-    const [furnishingComplexity, setFurnishingComplexity] = useLocalStorage('Furnishing Complexity', 'Min');
+    // const [furnishingComplexity, setFurnishingComplexity] = useLocalStorage('Furnishing Complexity', 'Min');
 
     // salary
     const [visualizerSalaryInhouse, setVisualizerSalaryInhouse] = useLocalStorage('Visualizer Salary Inhouse', '');
@@ -54,9 +54,8 @@ function MainTable() {
         // "7": 0
     });
 
-    // -------------- fetch from localstorage --------------- //
 
-    // const data = useDataFromStorage();
+    // -------------- fetch from localstorage --------------- //
 
     // ----- Modal popup -------//
 
@@ -68,8 +67,8 @@ function MainTable() {
 
         let evnArray = Object.values(platform);
         let output = 0;
-        // debugger
-        evnArray.forEach(el => setPlatformInput(output += el));
+        evnArray.forEach(el => output += el);
+        setPlatformInput(output);
     }, [platform])
 
     useEffect(() => {
@@ -141,7 +140,7 @@ function MainTable() {
         setTourAmenities('Amenities tours');
         setEnvironmentComplexity('Rural landscape');
         setBuildingComplexity("Simple geometrical shape");
-        setFurnishingComplexity('Min');
+        // setFurnishingComplexity('Min');
     }
 
 
@@ -171,10 +170,10 @@ function MainTable() {
                         tourAmenities,
                         tourApartments,
                         environmentComplexity,
-                        furnishingComplexity,
+                        // furnishingComplexity,
                         platformInput,
                         setPlatformInput,
-                        setFurnishingComplexity,
+                        // setFurnishingComplexity,
                         setPlatform,
                         setBuildingsCount,
                         setBuildingComplexity,

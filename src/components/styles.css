@@ -217,8 +217,11 @@ body {
 }
 
 .settings-table_block {
-    /*width: 505px;*/
+    width: 505px;
     margin: 0 auto;
+    height: 100%;
+    display: grid;
+    place-content: center;
 }
 
 .settings-table_item-name {
@@ -426,11 +429,11 @@ body {
 }
 
 .facade-complexity-label_center::after {
-    left: calc(50% - 8px);
+    left: calc(50% - 9px);
 }
 
 .facade-complexity-label_right::after {
-    right: -2px;
+    right: 2px;
 }
 
 .facade-complexity-input:checked + .facade-complexity-label {
@@ -470,11 +473,11 @@ body {
 }
 
 .furnishing-complexity-label_center::after {
-    left: calc(50% - 8px);
+    left: calc(50% - 9px);
 }
 
 .furnishing-complexity-label_right::after {
-    right: -2px;
+    right: 2px;
 }
 
 .furnishing-complexity-input:checked + .furnishing-complexity-label {
@@ -503,11 +506,11 @@ body {
 }
 
 .environment-complexity-label_center::after {
-    left: calc(50% - 8px);
+    left: calc(50% - 9px);
 }
 
 .environment-complexity-label_right::after {
-    right: -2px;
+    right: 2px;
 }
 
 .environment-complexity-input:checked + .environment-complexity-label {
@@ -616,6 +619,10 @@ button:focus {
     background-size: contain;
 }
 
+.calculate-button:disabled > span {
+    cursor: initial;
+}
+
 /************* buttons in popup ***************/
 
 .popup-actions {
@@ -625,7 +632,6 @@ button:focus {
 .close-button {
     color: #000000;
 }
-
 
 
 /************  CALC Styles ************/
@@ -780,11 +786,19 @@ button:focus {
 
 /********************************* BREAKPOINTS *******************************************/
 
+/* widthter screen */
+
+@media (max-width: 1440px) {
+    .settings-table_block {
+        /*width: initial;*/
+    }
+}
+
 /* make smaller height of screen*/
 @media (max-height: 846px) {
 
     .setting-table {
-        padding: 30px 110px;
+        padding: 50px 110px;
     }
 
     .calculator-table {
@@ -792,11 +806,11 @@ button:focus {
     }
 
     .settings-table_item-input {
-        margin-top: 10px;
+        margin-top: 15px;
     }
 
     .settings-table_item:not(:first-of-type) {
-        margin-top: 30px;
+        margin-top: 40px;
     }
 
     .actions-block {

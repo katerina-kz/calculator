@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import emailjs from 'emailjs-com';
-import apiKeys from './apiKeys'
 
 function Calculator(props) {
     const { options } = props;
@@ -186,22 +184,22 @@ function Calculator(props) {
 
     const handleVisCostTotal = () => { // -------------------------------------------------change when oursource
         return (
-            parseInt((options.tourApartments*5)*(options.visualizerSalaryInhouse/22))
-            +parseInt((options.tourAmenities*10)*(options.visualizerSalaryInhouse/22))
+            handleOutsource360Ap()
+            +handleOutsource360Am()
             +parseInt((options.buildingsCount*3)*(options.visualizerSalaryInhouse/22))
         )
     }
 
     const handleModCostTotal = () => { // -------------------------------------------------change when oursource
         return (
-            parseInt((parseInt(options.uniqueApartment/3))*(options.designerSalaryInhouse/22))
-            +parseInt((parseInt(options.uniqueApartment/3))*(options.modelerSalaryInhouse/22))
+            handleOutsourceBuildings()
+            +handleOutsource360Environment()
             +parseInt((handleBuildingsModeling())*(options.modelerSalaryInhouse/22))
             +parseInt((5+(handleEnvironmentComplexity()*5))*(options.modelerSalaryInhouse/22))
         )
     }
 
-    const handleDevCostTotal = () => { // -------------------------------------------------change when oursource
+    const handleDevCostTotal = () => {
        return (Math.ceil((options.platformInput*5)*(options.developerSalaryInhouse/22)))*3;
     }
 
@@ -211,44 +209,58 @@ function Calculator(props) {
         )
     }
 
-    // const submit = (e) => {
-    //     e.preventDefault()
-    //     const {
-    //         REACT_APP_EMAILJS_RECEIVER: receiverEmail,
-    //         REACT_APP_EMAILJS_TEMPLATEID: template,
-    //         REACT_APP_EMAILJS_USERID: user
-    //     } = env
-    //
-    //     sendFeedback(
-    //         template,
-    //         senderEmail,
-    //         receiverEmail,
-    //         feedback,
-    //         user
-    //     )
-    //
-    //     this.setState({
-    //         formSubmitted: true
-    //     })
-    // }
-    //
-    // const sendFeedback = (templateId, senderEmail, receiverEmail, feedback, user) => {
-    //     window.emailjs.send(
-    //         'default_service', // default email provider in your EmailJS account
-    //         templateId,
-    //         {
-    //             senderEmail,
-    //             receiverEmail,
-    //             feedback
-    //         },
-    //         user
-    //     )
-    //         .then(res => {
-    //             this.setState({ formEmailSent: true })
-    //         })
-    //         // Handle errors here however you like, or use a React error boundary
-    //         .catch(err => console.error('Failed to send feedback. Error: ', err))
-    // }
+    const [ data, setData ] = useState({
+        Visualization: {
+            days: {
+                '360 apt. tours': calculateDays('360 apt. tours'),
+                '360 amenities tours': calculateDays('360 amenities tours'),
+                'vantage panoramas': calculateDays('vantage panoramas'),
+                'total visualisation': calculateDays('total visualisation'),
+            },
+            costs: {
+                '360 apt. tours': calculateCost('360 apt. tours'),
+                '360 amenities tours': calculateCost('360 amenities tours'),
+                'vantage panoramas': calculateCost('vantage panoramas'),
+                'total visualisation': calculateCost('total visualisation')
+            },
+        },
+        Modeling: {
+            days: {
+                '2d-plan': calculateDays('2d-plan'),
+                '3d-plan': calculateDays('3d-plan'),
+                'buildings': calculateDays('buildings'),
+                'environment': calculateDays( 'environment'),
+                'total modeling': calculateDays('total modeling'),
+            },
+            costs: {
+                '2d-plan': calculateCost('2d-plan'),
+                '3d-plan': calculateCost('3d-plan'),
+                'buildings': calculateCost('buildings'),
+                'environment': calculateCost( 'environment'),
+                'total modeling': calculateCost('total modeling'),
+            }
+        },
+        Development: {
+            days: {
+                'initial': calculateDays('initial'),
+                'internal testing': calculateDays('internal testing'),
+                'acceptance testing': calculateDays('acceptance testing'),
+                'total development': calculateDays('total development'),
+            },
+            costs: {
+                'initial': calculateCost('initial'),
+                'internal testing': calculateCost('internal testing'),
+                'acceptance testing': calculateCost('acceptance testing'),
+                'total development': calculateCost('total development'),
+            },
+        },
+        Total: {
+            'days': calculateDays('total days'),
+            'costs': calculateCost('total cost'),
+        }
+    })
+
+    // console.log(data);
 
     return (
         <form className='calculator-table column none'>
@@ -380,13 +392,12 @@ function Calculator(props) {
                     <button className='adjust-salary-button reset-button_styles' visible={options.isModalVisible} onClick={openModal}>ADJUST SALARIES</button>
                 </div>
                 <div className='save-box calculate-box'>
-                    <button className='save-button calculate-button reset-button_styles'>
+                    <button disabled className='save-button calculate-button reset-button_styles'>
                         <span>SAVE</span>
                     </button>
                 </div>
             </div>
         </form>
-
       );
 }
 

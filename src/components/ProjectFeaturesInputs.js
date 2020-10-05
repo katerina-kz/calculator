@@ -2,70 +2,54 @@ import React, {useEffect, useState} from 'react';
 
 function ProjectFeaturesInputs(props) {
     const { options, click, clear } = props;
-    const [isDisable, setIsDisable] = useState(false); // change in production
+    const [isDisable, setIsDisable] = useState(true); // change in production
+    const [isCheckedWeb, setIsCheckedWeb] = useState(false);
+    const [isCheckedMob, setIsCheckedMob] = useState(false);
+    const [isCheckedDesk, setIsCheckedDesk] = useState(false);
 
-    const onChangeProjectName = (e) => {
-        options.setProjectName(e.target.value);
-    }
+    useEffect( () => {
+        options.platform[1] === 1 ? setIsCheckedWeb(true) : setIsCheckedWeb(false);
+        options.platform[2] === 1 ? setIsCheckedMob(true) : setIsCheckedMob(false);
+        options.platform[3] === 1 ? setIsCheckedDesk(true) : setIsCheckedDesk(false);
+    }, [ options.platform]);
 
-    const onChangeBuildingCount = (e) => {
-        options.setBuildingsCount('');
-        options.setBuildingsCount(e.target.value);
-        handleDisabled();
-    }
-
-    const onChangeUniqueBuildings = (e) => {
-        options.setUniqueBuildings(e.target.value);
-        handleDisabled();
-    }
-
-    const onChangeUniqueApartment = (e) => {
-        options.setUniqueApartment(e.target.value);
-        handleDisabled();
-    }
-
-    const onChangeTourApartments = (e) => {
-        options.setTourApartments(e.target.value);
-        handleDisabled();
-    }
-
-    const onChangeTourAmenities = (e) => {
-        options.setTourAmenities(e.target.value);
-        handleDisabled();
-    }
-
-    const onChangeFurnishingComplexity = (e) => {
-        options.setFurnishingComplexity(e.target.value);
-    }
-
-    const onChangeEnvironmentComplexity = (e) => {
-        options.setEnvironmentComplexity(e.target.value);
-    }
-
-    const onChangePlatform = (e) => {
-        e.target.checked === true
-            ? options.setPlatform({...options.platform, [e.target.name]: 1})
-            : options.setPlatform({...options.platform, [e.target.name]: 0})
-        handleDisabled();
-    }
-
-    const onChangeBuildingComplexity = (e) => {
-        options.setBuildingComplexity(e.target.value);
-    }
-
-    const handleDisabled = () => {
+    useEffect( () => {
         options.platformInput !== 0 &&
         options.buildingsCount !== 'Building total' &&
         options.uniqueBuildings !== 'Unique buildings' &&
         options.uniqueApartment !== 'Unique apt.' &&
         options.tourApartments !== 'Apt. tours' &&
         options.tourAmenities !== 'Amenities tours' ? setIsDisable(false) : setIsDisable(true)
-    };
+    }, [options.platformInput, options.buildingsCount, options.uniqueBuildings, options.uniqueApartment, options.tourApartments, options.tourAmenities]);
 
-    const onBlurBuild = () => {
-         options.buildingsCount === '' ? options.setBuildingsCount('Building total') : options.setBuildingsCount(options.buildingsCount);
-         handleDisabled();
+    const onChangeProjectName = (e) => options.setProjectName(e.target.value);
+
+    const onChangeBuildingCount = (e) => {
+        options.setBuildingsCount('');
+        options.setBuildingsCount(e.target.value);
     }
+
+    const onChangeUniqueBuildings = (e) => options.setUniqueBuildings(e.target.value);
+
+    const onChangeUniqueApartment = (e) => options.setUniqueApartment(e.target.value);
+
+    const onChangeTourApartments = (e) => options.setTourApartments(e.target.value);
+
+    const onChangeTourAmenities = (e) => options.setTourAmenities(e.target.value);
+
+    const onChangeFurnishingComplexity = (e) => options.setFurnishingComplexity(e.target.value);
+
+    const onChangeEnvironmentComplexity = (e) => options.setEnvironmentComplexity(e.target.value);
+
+    const onChangePlatform = (e) => {
+        e.target.checked === true
+            ? options.setPlatform({...options.platform, [e.target.name]: 1})
+            : options.setPlatform({...options.platform, [e.target.name]: 0})
+    }
+
+    const onChangeBuildingComplexity = (e) => options.setBuildingComplexity(e.target.value);
+
+    const onBlurBuild = () => options.buildingsCount === '' ? options.setBuildingsCount('Building total') : options.setBuildingsCount(options.buildingsCount);
 
     useEffect(() => {
         if (options.totalDays) {
@@ -99,15 +83,15 @@ function ProjectFeaturesInputs(props) {
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">Platforms</div>
                     <div className="settings-table_item-input">
-                        <input className='platform-input' type='checkbox' value='left' id='id-web' name={"1"}
+                        <input className='platform-input' checked={isCheckedWeb} type='checkbox' value='left' id='id-web' name={"1"}
                                onChange={onChangePlatform}/>
                         <label htmlFor='id-web' className='platform-input-label web-label'/>
 
-                        <input className='platform-input' type='checkbox' value='left' id='id-mobile' name={"2"}
+                        <input className='platform-input' checked={isCheckedMob} type='checkbox' value='left' id='id-mobile' name={"2"}
                                onChange={onChangePlatform}/>
                         <label htmlFor='id-mobile' className='platform-input-label mobile-label'/>
 
-                        <input className='platform-input' type='checkbox' value='left' id='id-desktop' name={"3"}
+                        <input className='platform-input' checked={isCheckedDesk} type='checkbox' value='left' id='id-desktop' name={"3"}
                                onChange={onChangePlatform}/>
                         <label htmlFor='id-desktop' className='platform-input-label desktop-label' />
                     </div>
@@ -122,7 +106,6 @@ function ProjectFeaturesInputs(props) {
                             value={options.buildingsCount}
                             onClick={() => isNaN(options.buildingsCount) ? options.setBuildingsCount('') : options.setBuildingsCount(options.buildingsCount)}
                             onBlur={() => options.buildingsCount === '' ? options.setBuildingsCount('Building total') : options.setBuildingsCount(options.buildingsCount)}
-                            // onBlur={onBlurBuild}
                             onChange={onChangeBuildingCount}
                         />
                         <input
@@ -187,47 +170,49 @@ function ProjectFeaturesInputs(props) {
                         />
                     </div>
                 </div>
-                <div className="settings-table_item">
-                    <div className="settings-table_item-name">Furnishing complexity</div>
-                    {/*dont have functional yet */}
-                    <div className="settings-table_item-input general-input-block furnishing-complexity-block">
-                        <div className='general-input-div furnishing-complexity-div furnishing-complexity-div_left'>
-                            <span className='line line-furnishing'></span>
-                            <input
-                                className='general-input furnishing-complexity-input furnishing-complexity-input_left'
-                                type="radio" id="furnishing-complexity-min" name="furnishing-complexity" value="Min"
-                                onChange={onChangeFurnishingComplexity}
-                                checked={options.furnishingComplexity === "Min"}/>
-                            <label
-                                className='general-label furnishing-complexity-label furnishing-complexity-label_left'
-                                htmlFor="furnishing-complexity-min">Min</label>
-                        </div>
-                        <div className='general-input-div furnishing-complexity-div furnishing-complexity-div_center'>
-                            <span className='line line-center line-furnishing'></span>
-                            <input
-                                className='general-input furnishing-complexity-input furnishing-complexity-input_center'
-                                type="radio" id="furnishing-complexity-mid" name="furnishing-complexity" value="Mid"
-                                onChange={onChangeFurnishingComplexity}
-                                checked={options.furnishingComplexity === "Mid"}/>
-                            <label
-                                className='general-label furnishing-complexity-label furnishing-complexity-label_center'
-                                htmlFor="furnishing-complexity-mid">Mid</label>
-                        </div>
-                        <div className='general-input-div furnishing-complexity-div furnishing-complexity-div_right'>
-                            <input
-                                className='general-input furnishing-complexity-input furnishing-complexity-input_right'
-                                type="radio" id="furnishing-complexity-max" name="furnishing-complexity" value="Max"
-                                onChange={onChangeFurnishingComplexity}
-                                checked={options.furnishingComplexity === "Max"}/>
-                            <label
-                                className='general-label furnishing-complexity-label furnishing-complexity-label_right'
-                                htmlFor="furnishing-complexity-max">Max</label>
-                        </div>
-                    </div>
-                </div>
+
+                 {/***************** Uncommit when Denis add funcionality **********************/}
+
+                {/*<div className="settings-table_item">*/}
+                {/*    <div className="settings-table_item-name">Furnishing complexity</div>*/}
+                {/*    /!*dont have functional yet *!/*/}
+                {/*    <div className="settings-table_item-input general-input-block furnishing-complexity-block">*/}
+                {/*        <div className='general-input-div furnishing-complexity-div furnishing-complexity-div_left'>*/}
+                {/*            <span className='line line-furnishing'></span>*/}
+                {/*            <input*/}
+                {/*                className='general-input furnishing-complexity-input furnishing-complexity-input_left'*/}
+                {/*                type="radio" id="furnishing-complexity-min" name="furnishing-complexity" value="Min"*/}
+                {/*                onChange={onChangeFurnishingComplexity}*/}
+                {/*                checked={options.furnishingComplexity === "Min"}/>*/}
+                {/*            <label*/}
+                {/*                className='general-label furnishing-complexity-label furnishing-complexity-label_left'*/}
+                {/*                htmlFor="furnishing-complexity-min">Min</label>*/}
+                {/*        </div>*/}
+                {/*        <div className='general-input-div furnishing-complexity-div furnishing-complexity-div_center'>*/}
+                {/*            <span className='line line-center line-furnishing'></span>*/}
+                {/*            <input*/}
+                {/*                className='general-input furnishing-complexity-input furnishing-complexity-input_center'*/}
+                {/*                type="radio" id="furnishing-complexity-mid" name="furnishing-complexity" value="Mid"*/}
+                {/*                onChange={onChangeFurnishingComplexity}*/}
+                {/*                checked={options.furnishingComplexity === "Mid"}/>*/}
+                {/*            <label*/}
+                {/*                className='general-label furnishing-complexity-label furnishing-complexity-label_center'*/}
+                {/*                htmlFor="furnishing-complexity-mid">Mid</label>*/}
+                {/*        </div>*/}
+                {/*        <div className='general-input-div furnishing-complexity-div furnishing-complexity-div_right'>*/}
+                {/*            <input*/}
+                {/*                className='general-input furnishing-complexity-input furnishing-complexity-input_right'*/}
+                {/*                type="radio" id="furnishing-complexity-max" name="furnishing-complexity" value="Max"*/}
+                {/*                onChange={onChangeFurnishingComplexity}*/}
+                {/*                checked={options.furnishingComplexity === "Max"}/>*/}
+                {/*            <label*/}
+                {/*                className='general-label furnishing-complexity-label furnishing-complexity-label_right'*/}
+                {/*                htmlFor="furnishing-complexity-max">Max</label>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">Environment complexity</div>
-                    {/*dont have functional yet */}
                     <div className="settings-table_item-input general-input-block environment-complexity-block">
                         <div className='general-input-div environment-complexity-div environment-complexity-div_left'>
                             <span className='line line-environment'></span>
