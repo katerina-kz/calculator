@@ -1,13 +1,30 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import SaveModal from "./SaveModal";
+import {useLocalStorage} from "./hooks/useLocalStorage";
 
 function Calculator(props) {
     const { options } = props;
+    const [email, setEmail] = useLocalStorage('email','');
+    const [saveBlock, setSaveBlock] = useState(true);
+    const [ isSaveModalVisible, setIsSaveModalVisible ] = useState(false);
 
-    const openModal = (e) => {
+    const openModalCalc = (e) => {
         e.preventDefault();
         document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
-        options.setIsModalVisible(true);
+        options.setIsCalcModalVisible(true);
     }
+
+    const openModalSave = (e) => {
+        e.preventDefault();
+        document.querySelector('.actions-calc_block').nextElementSibling.style.display = 'block';
+        setIsSaveModalVisible(true);
+    }
+
+    const closeModal = () => {
+        document.querySelector('.actions-calc_block').nextElementSibling.style.display = 'none';
+        setIsSaveModalVisible(false);
+    }
+
 
     const calculateDays = (opt) => {
         switch (opt) {
@@ -20,9 +37,9 @@ function Calculator(props) {
             case 'total visualisation':
                 return handleVisDaysTotal();
             case '2d-plan':
-                return isNaN(options.uniqueApartment) ? 0 : parseInt(options.uniqueApartment/3);
+                return isNaN(options.uniqueApartment) ? 0 : Math.ceil(options.uniqueApartment/3);
             case '3d-plan':
-                return isNaN(options.uniqueApartment) ? 0 : parseInt(options.uniqueApartment/3);
+                return isNaN(options.uniqueApartment) ? 0 : Math.ceil(options.uniqueApartment/3);
             case 'buildings':
                return handleBuildingsModeling();
             case 'environment':
@@ -40,7 +57,7 @@ function Calculator(props) {
             case 'total days':
                 return handleProjectTotal();
             case 'total month':
-                return Math.ceil(handleProjectTotal()/30);
+                return Math.round((handleProjectTotal()/22) * 2) / 2;
         }
     }
 
@@ -183,19 +200,29 @@ function Calculator(props) {
     }
 
     const handleVisCostTotal = () => { // -------------------------------------------------change when oursource
+        const build = isNaN(options.buildingsCount) ? 0 : parseInt((options.buildingsCount*3)*(options.visualizerSalaryInhouse/22));
         return (
             handleOutsource360Ap()
             +handleOutsource360Am()
-            +parseInt((options.buildingsCount*3)*(options.visualizerSalaryInhouse/22))
+            +build
         )
     }
 
     const handleModCostTotal = () => { // -------------------------------------------------change when oursource
+        const build =  handleOutsourceBuildings();
+        const env = handleOutsource360Environment();
+        const des = isNaN(options.uniqueApartment) ? 0 : parseInt((parseInt(options.uniqueApartment/3))*(options.designerSalaryInhouse/22));
+        const mod = isNaN(options.uniqueApartment) ? 0 : parseInt((parseInt(options.uniqueApartment/3))*(options.modelerSalaryInhouse/22));
+        // console.log(build, secont, thir, four)
         return (
-            handleOutsourceBuildings()
-            +handleOutsource360Environment()
-            +parseInt((handleBuildingsModeling())*(options.modelerSalaryInhouse/22))
-            +parseInt((5+(handleEnvironmentComplexity()*5))*(options.modelerSalaryInhouse/22))
+            build+
+            env+
+            des+
+            mod
+            // handleOutsourceBuildings()
+            // +handleOutsource360Environment()
+            // +parseInt((options.uniqueApartment/3)*(options.designerSalaryInhouse/22))
+            // +parseInt((options.uniqueApartment/3)*(options.modelerSalaryInhouse/22))
         )
     }
 
@@ -209,7 +236,7 @@ function Calculator(props) {
         )
     }
 
-    const [ data, setData ] = useState({
+    const data = {
         Visualization: {
             days: {
                 '360 apt. tours': calculateDays('360 apt. tours'),
@@ -257,10 +284,81 @@ function Calculator(props) {
         Total: {
             'days': calculateDays('total days'),
             'costs': calculateCost('total cost'),
-        }
-    })
+        },
+        Email: email,
+    };
 
-    // console.log(data);
+
+    function sendMail (data, e) {
+        e.preventDefault();
+
+        let htmlEx = document.createElement('div').innerHTML = data;
+        //     `
+        // Visualization:
+        //     days:
+        //         360 apt. tours: ${data.Visualization.days['360 apt. tours']}
+        //         360 amenities tours: ${data.Visualization.days['360 amenities tours']}
+        //         vantage panoramas: ${data.Visualization.days['vantage panoramas']}
+        //         total visualisation: ${data.Visualization.days['total visualisation']}
+        //
+        //     costs:
+        //         360 apt. tours: ${data.Visualization.costs['360 apt. tours']}
+        //         360 amenities tours: ${data.Visualization.costs['360 apt. tours']}
+        //         vantage panoramas: ${data.Visualization.costs['360 apt. tours']}
+        //         total visualisation: ${data.Visualization.costs['360 apt. tours']}
+        //
+        // Modeling:
+        //     days:
+        //         2d-plan: ${data.Modeling.days['2d-plan']},
+        //         3d-plan: ${data.Modeling.days['3d-plan']},
+        //         buildings: ${data.Modeling.days['buildings']},
+        //         environment: ${data.Modeling.days['environment']},
+        //         total modeling: ${data.Modeling.days['total modeling']},
+        //
+        //     costs:
+        //         2d-plan: ${data.Modeling.costs['2d-plan']},
+        //         3d-plan: ${data.Modeling.costs['3d-plan']},
+        //         buildings: ${data.Modeling.costs['buildings']},
+        //         environment: ${data.Modeling.costs['environment']},
+        //         total modeling: ${data.Modeling.costs['total modeling']},
+        //
+        // Development:
+        //     days:
+        //         initial: ${data.Development.days['initial']},
+        //         internal testing: ${data.Development.days['internal testing']},
+        //         acceptance testing: ${data.Development.days['acceptance testing']},
+        //         total development: ${data.Development.days['total development']},
+        //
+        //     costs:
+        //         initial: ${data.Development.costs['initial']},
+        //         internal testing: ${data.Development.costs['internal testing']},
+        //         acceptance testing: ${data.Development.costs['acceptance testing']},
+        //         total development: ${data.Development.costs['total development']},
+        //
+        // Total:
+        //     days: ${data.Total['days']},
+        //     costs: ${data.Total['costs']},
+       // `
+
+
+
+         let dataPost = new FormData();
+         dataPost.append( "html",  JSON.stringify(htmlEx));
+        console.log(JSON.stringify(htmlEx));
+         // dataPost.append( "json",  JSON.stringify(bodyPost));
+        fetch('mail.php', {
+            method: 'POST',
+            body: dataPost,
+        })
+            .then(function (res) {
+                console.log(res)
+            })
+            .catch(function (res) {
+                console.log(res)
+            })
+
+        closeModal();
+    };
 
     return (
         <form className='calculator-table column none'>
@@ -389,14 +487,26 @@ function Calculator(props) {
             </div>
             <div className='actions-calc_block'>
                 <div className='adjust-salary_box'>
-                    <button className='adjust-salary-button reset-button_styles' visible={options.isModalVisible} onClick={openModal}>ADJUST SALARIES</button>
+                    <button className='adjust-salary-button reset-button_styles' visible={options.isModalVisible} onClick={openModalCalc}>ADJUST SALARIES</button>
                 </div>
                 <div className='save-box calculate-box'>
-                    <button disabled className='save-button calculate-button reset-button_styles'>
+                    <button onClick={openModalSave} className='save-button calculate-button reset-button_styles'>
                         <span>SAVE</span>
                     </button>
                 </div>
             </div>
+            {
+                saveBlock &&
+                <SaveModal options = {{
+                    isSaveModalVisible,
+                    setIsSaveModalVisible,
+                    email,
+                    setEmail,
+                }}
+                click={(e) => sendMail(data, e)}
+                close={closeModal}
+                />
+            }
         </form>
       );
 }

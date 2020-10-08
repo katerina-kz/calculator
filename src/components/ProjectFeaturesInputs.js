@@ -1,11 +1,25 @@
 import React, {useEffect, useState} from 'react';
+import {Tooltip, Fade} from '@material-ui/core';
 
 function ProjectFeaturesInputs(props) {
     const { options, click, clear } = props;
-    const [isDisable, setIsDisable] = useState(true); // change in production
     const [isCheckedWeb, setIsCheckedWeb] = useState(false);
     const [isCheckedMob, setIsCheckedMob] = useState(false);
     const [isCheckedDesk, setIsCheckedDesk] = useState(false);
+
+
+    const [open, setOpen] = useState({
+        'buildingsCount': false,
+        'uniqueBuildings': false,
+        'uniqueApartment': false,
+        'tourApartments': false,
+        'tourAmenities': false,
+    })
+
+    const redExp = {
+        tourAmenities: /[0-9]{0,}\s(amenities|tours)/gm,
+        tourAmenitiesDig: /^[0-9]{0,}$/gm,
+    }
 
     useEffect( () => {
         options.platform[1] === 1 ? setIsCheckedWeb(true) : setIsCheckedWeb(false);
@@ -13,31 +27,29 @@ function ProjectFeaturesInputs(props) {
         options.platform[3] === 1 ? setIsCheckedDesk(true) : setIsCheckedDesk(false);
     }, [ options.platform]);
 
-    useEffect( () => {
-        options.platformInput !== 0 &&
-        options.buildingsCount !== 'Building total' &&
-        options.uniqueBuildings !== 'Unique buildings' &&
-        options.uniqueApartment !== 'Unique apt.' &&
-        options.tourApartments !== 'Apt. tours' &&
-        options.tourAmenities !== 'Amenities tours' ? setIsDisable(false) : setIsDisable(true)
-    }, [options.platformInput, options.buildingsCount, options.uniqueBuildings, options.uniqueApartment, options.tourApartments, options.tourAmenities]);
-
     const onChangeProjectName = (e) => options.setProjectName(e.target.value);
 
-    const onChangeBuildingCount = (e) => {
-        options.setBuildingsCount('');
-        options.setBuildingsCount(e.target.value);
+    const onChange = (set, obj, e) => {
+        set('');
+        let value = e.target.value;
+        if (isNaN(value)) {
+            setOpen({...open,
+                [obj]: true,
+            });
+            set(value.replace(/[^\d]/g, ''));
+        } else {
+            setOpen({
+                'buildingsCount': false,
+                'uniqueBuildings': false,
+                'uniqueApartment': false,
+                'tourApartments': false,
+                'tourAmenities': false
+            });
+            set(value.replace(/[^\d]/g, ''));
+        }
     }
 
-    const onChangeUniqueBuildings = (e) => options.setUniqueBuildings(e.target.value);
-
-    const onChangeUniqueApartment = (e) => options.setUniqueApartment(e.target.value);
-
-    const onChangeTourApartments = (e) => options.setTourApartments(e.target.value);
-
-    const onChangeTourAmenities = (e) => options.setTourAmenities(e.target.value);
-
-    const onChangeFurnishingComplexity = (e) => options.setFurnishingComplexity(e.target.value);
+    // const onChangeFurnishingComplexity = (e) => options.setFurnishingComplexity(e.target.value);
 
     const onChangeEnvironmentComplexity = (e) => options.setEnvironmentComplexity(e.target.value);
 
@@ -47,9 +59,19 @@ function ProjectFeaturesInputs(props) {
             : options.setPlatform({...options.platform, [e.target.name]: 0})
     }
 
+    const onBlur = (state, set, str) => {
+        setOpen({
+            buildingsCount: false,
+            uniqueBuildings: false,
+            uniqueApartment: false,
+            tourApartments: false,
+            tourAmenities: false
+        });
+        state === '' ? set(str) : set(state);
+    }
+
     const onChangeBuildingComplexity = (e) => options.setBuildingComplexity(e.target.value);
 
-    const onBlurBuild = () => options.buildingsCount === '' ? options.setBuildingsCount('Building total') : options.setBuildingsCount(options.buildingsCount);
 
     useEffect(() => {
         if (options.totalDays) {
@@ -81,7 +103,7 @@ function ProjectFeaturesInputs(props) {
         <div className="setting-table column">
             <div className="settings-table_block ">
                 <div className="settings-table_item">
-                    <div className="settings-table_item-name">Platforms</div>
+                    <div className="settings-table_item-name">Platforms<span className='footnote platform_footnote'>*</span></div>
                     <div className="settings-table_item-input">
                         <input className='platform-input' checked={isCheckedWeb} type='checkbox' value='left' id='id-web' name={"1"}
                                onChange={onChangePlatform}/>
@@ -99,33 +121,43 @@ function ProjectFeaturesInputs(props) {
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">Buildings</div>
                     <div className="settings-table_item-input">
-                        <input
-                            className='buildings-input number-input'
-                            type='text'
-                            id='id-building-total'
-                            value={options.buildingsCount}
-                            onClick={() => isNaN(options.buildingsCount) ? options.setBuildingsCount('') : options.setBuildingsCount(options.buildingsCount)}
-                            onBlur={() => options.buildingsCount === '' ? options.setBuildingsCount('Building total') : options.setBuildingsCount(options.buildingsCount)}
-                            onChange={onChangeBuildingCount}
-                        />
-                        <input
-                            className='buildings-input number-input'
-                            type='text'
-                            id='id-building-total'
-                            value={options.uniqueBuildings}
-                            onClick={() => isNaN(options.uniqueBuildings) ? options.setUniqueBuildings('') : options.setUniqueBuildings(options.uniqueBuildings)}
-                            onBlur={() => options.uniqueBuildings === '' ? options.setUniqueBuildings('Unique buildings') : options.setUniqueBuildings(options.uniqueBuildings)}
-                            onChange={onChangeUniqueBuildings}
-                        />
-                        <input
-                            className='buildings-input number-input'
-                            type='text'
-                            id='id-building-total'
-                            value={options.uniqueApartment}
-                            onClick={() => isNaN(options.uniqueApartment) ? options.setUniqueApartment('') : options.setUniqueApartment(options.uniqueApartment)}
-                            onBlur={() => options.uniqueApartment === '' ?  options.setUniqueApartment('Unique apt.') : options.setUniqueApartment(options.uniqueApartment)}
-                            onChange={onChangeUniqueApartment}
-                        />
+                        <Tooltip open={open.buildingsCount} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
+                            <input
+                                className='buildings-input number-input'
+                                type='text'
+                                id='id-building-total'
+                                value={options.buildingsCount}
+                                onClick={() => isNaN(options.buildingsCount) ? options.setBuildingsCount('') : options.setBuildingsCount(options.buildingsCount)}
+                                onBlur={() => onBlur(options.buildingsCount, options.setBuildingsCount, 'Buildings count')}
+                                onChange={(e) => onChange(options.setBuildingsCount, 'buildingsCount', e)}
+                            />
+
+                        </Tooltip>
+                        <span className='footnote building-total_footnote'>*</span>
+                        <Tooltip open={open.uniqueBuildings} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
+                            <input
+                                className='buildings-input number-input'
+                                type='text'
+                                id='id-building-total'
+                                value={options.uniqueBuildings}
+                                onClick={() => isNaN(options.uniqueBuildings) ? options.setUniqueBuildings('') : options.setUniqueBuildings(options.uniqueBuildings)}
+                                onBlur={() => onBlur(options.uniqueBuildings, options.setUniqueBuildings, 'Unique buildings')}
+                                onChange={(e) => onChange(options.setUniqueBuildings, 'uniqueBuildings', e)}
+                            />
+                        </Tooltip>
+                        <span className='footnote unique-buildings_footnote'>*</span>
+                        <Tooltip open={open.uniqueApartment} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
+                            <input
+                                className='buildings-input number-input'
+                                type='text'
+                                id='id-building-total'
+                                value={options.uniqueApartment}
+                                onClick={() => isNaN(options.uniqueApartment) ? options.setUniqueApartment('') : options.setUniqueApartment(options.uniqueApartment)}
+                                onBlur={() => onBlur(options.uniqueApartment, options.setUniqueApartment, 'Unique apt.')}
+                                onChange={(e) => onChange(options.setUniqueApartment, 'uniqueApartment', e)}
+                            />
+                        </Tooltip>
+                        <span className='footnote unique-apart_footnote'>*</span>
                     </div>
                 </div>
                 <div className="settings-table_item">
@@ -150,24 +182,28 @@ function ProjectFeaturesInputs(props) {
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">360 tours</div>
                     <div className="settings-table_item-input tour-block-360">
-                        <input
-                            className='tour-input-360 number-input'
-                            type='text'
-                            id='id-tour-ap'
-                            value={options.tourApartments}
-                            onClick={() => isNaN(options.tourApartments) ? options.setTourApartments('') : options.setTourApartments(options.tourApartments)}
-                            onBlur={() => options.tourApartments === '' ? options.setTourApartments('Apt. tours') : options.setTourApartments(options.tourApartments)}
-                            onChange={onChangeTourApartments}
-                        />
-                        <input
-                            className='tour-input-360 number-input'
-                            type='text'
-                            id='id-tour-am'
-                            value={options.tourAmenities}
-                            onClick={() => isNaN(options.tourAmenities) ? options.setTourAmenities('') : options.setTourAmenities(options.tourAmenities)}
-                            onBlur={() => options.tourAmenities === '' ? options.setTourAmenities('Amenities tours') : options.setTourAmenities(options.tourAmenities)}
-                            onChange={onChangeTourAmenities}
-                        />
+                        <Tooltip open={open.tourApartments} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
+                            <input
+                                className='tour-input-360 number-input'
+                                type='text'
+                                id='id-tour-ap'
+                                value={options.tourApartments}
+                                onClick={() => isNaN(options.tourApartments) ? options.setTourApartments('') : options.setTourApartments(options.tourApartments)}
+                                onBlur={() => onBlur(options.tourApartments, options.setTourApartments, 'Apt. tours')}
+                                onChange={(e) => onChange(options.setTourApartments, 'tourApartments', e)}
+                            />
+                        </Tooltip>
+                        <Tooltip open={open.tourAmenities} TransitionProps={{timeout: 600}}  title="Contains unacceptable characters" arrow={true}>
+                            <input
+                                className='tour-input-360 number-input'
+                                type='text'
+                                id='id-tour-am'
+                                value={options.tourAmenities}
+                                onClick={() => redExp.tourAmenities.test(options.tourAmenities) ? options.setTourAmenities('') : options.setTourAmenities(options.tourAmenities)}
+                                onBlur={() => onBlur(options.tourAmenities, options.setTourAmenities, 'Amenities tours')}
+                                onChange={(e) => onChange(options.setTourAmenities, 'tourAmenities', e)}
+                            />
+                        </Tooltip>
                     </div>
                 </div>
 
@@ -255,7 +291,7 @@ function ProjectFeaturesInputs(props) {
                     {
                         options.loaderBlock &&
                         <div className='calculate-box' >
-                            <button className='calculate-button reset-button_styles' disabled={isDisable} onClick={click}>
+                            <button className='calculate-button reset-button_styles' onClick={click}>
                                 <span>Calculate</span>
                             </button>
                         </div>

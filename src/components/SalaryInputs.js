@@ -66,11 +66,11 @@ function SalaryInputs(props) {
 
     const closeModal = () => {
         document.querySelector('.calculator-table').nextElementSibling.style.display = 'none';
-        options.setIsModalVisible(false);
+        options.setIsCalcModalVisible(false);
     }
 
     return (
-        <Modal visible={options.isModalVisible} width="400" height="440" effect="fadeInUp" onClickAway={() => closeModal()}>
+        <Modal visible={options.isCalcModalVisible} width="400" height="440" effect="fadeInUp" onClickAway={() => closeModal()}>
         <div className='salary-table column'>
             <div className='salary-table_title column-title'>
                 Salary

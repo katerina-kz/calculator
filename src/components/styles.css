@@ -143,7 +143,8 @@ body {
 .table-root_grid {
     margin: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(50%, 50%));
+    /*grid-template-rows: repeat(1, 100%);*/
 }
 
 /*loader styles*/
@@ -165,13 +166,27 @@ body {
     /*transition: 0.7s;*/
 }
 
+
+
 .transition-left-calc {
-    position: relative !important;
-    left: 0 !important;
-    right: initial !important;
-    /*transform: translateX(-100%);*/
-    transition: 0.7s !important;
+    /*position: relative !important;*/
+    animation-duration: 0.8s;
+    animation-iteration-count: 1;
+    animation-name: left-calc;
+    animation-timing-function: ease;
 }
+
+@keyframes left-calc {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+/*.grid-column-start {*/
+/*    grid-column-start: 1;*/
+/*}*/
 
 .transition-right {
     transform: translateX(100%);
@@ -211,8 +226,8 @@ body {
     background-color: #F2C94C;
     padding: 130px 110px;
     opacity: 0;
-    position: relative;
-    right: 0;
+    /*position: relative;*/
+    /*right: 0;*/
     /*height: 100vh;*/
 }
 
@@ -229,10 +244,12 @@ body {
     font-weight: 700;
     font-size: 18px;
     line-height: 23px;
+    position: relative;
 }
 
 .settings-table_item-input {
     margin-top: 15px;
+    position: relative;
 }
 
 .settings-table_item:not(:first-of-type) {
@@ -637,7 +654,7 @@ button:focus {
 /************  CALC Styles ************/
 
 .calculator-table {
-    padding: 130px 110px;
+    padding: 50px 190px;
 }
 
 .total-block {
@@ -875,4 +892,70 @@ button:focus {
 
 .calculator-table + div {
     display: none;
+}
+
+.email-input {
+    display: grid !important;
+    place-items: center;
+    height: 60%;
+}
+
+.email-input > div {
+    width: 300px !important;
+    /*margin: 0 auto !important;*/
+}
+
+.save-modal-button {
+    margin-left: 215px;
+}
+
+
+*::placeholder {
+    font-weight: 300;
+    color: #000;
+}
+
+/***************** Tooltips ********************/
+
+.MuiTooltip-tooltip {
+    background-color: #fff !important;
+    border-radius: 0% !important;
+    width: 136px !important;
+    height: 38px !important;
+    text-align: center !important;
+    filter: drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.4)) !important;
+}
+
+.MuiTooltip-tooltipPlacementBottom {
+    font-family: Fragolino !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
+    line-height: 18px !important;
+    color: #EB5757 !important;
+}
+
+.MuiTooltip-arrow {
+    color: #fff !important;
+    width: 19px !important;
+}
+
+/***************** Footnote ********************/
+
+
+.footnote {
+    position: absolute;
+    font-size: 22px;
+    top: -8px;
+}
+
+.building-total_footnote {
+    left: 142px;
+}
+
+.unique-buildings_footnote {
+    left: 310px;
+}
+
+.platform_footnote {
+    top: 0;
 }

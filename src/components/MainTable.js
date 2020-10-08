@@ -59,7 +59,7 @@ function MainTable() {
 
     // ----- Modal popup -------//
 
-    const [ isModalVisible, setIsModalVisible ] = useState(false);
+    const [ isCalcModalVisible, setIsCalcModalVisible ] = useState(false);
 
     // --------------------------- loader loading --------------------------- //
 
@@ -110,19 +110,15 @@ function MainTable() {
 
 
     const clickCalculate = () => {
-        document.querySelector('.setting-table').classList.add('transition-left-calc', 'opacity-calc');
+
         document.querySelector('.setting-table').classList.remove('block');
+        document.querySelector('.setting-table').classList.add('transition-left-calc', 'opacity-calc');
 
-        // setTimeout(() => {
+        setTimeout(() => {
             // debugger
-            document.querySelector('.setting-table').classList.remove('transition-left-calc');
-
             setLoaderBlock(false);
-
-            // setCalculateBlock(true);
             document.querySelector('.calculator-table').classList.remove('none');
-
-        // }, 900);
+        }, 800);
     };
 
     const clearProjectInputs = () => {
@@ -209,8 +205,8 @@ function MainTable() {
                         modelerSalaryOutsource,
                         developerSalaryInhouse,
                         developerSalaryOutsource,
-                        isModalVisible,
-                        setIsModalVisible,
+                        isCalcModalVisible,
+                        setIsCalcModalVisible,
                         totalDays,
                         setTotalDays,
                         isOutsource,
@@ -236,8 +232,8 @@ function MainTable() {
                         setModelerSalaryOutsource,
                         setDeveloperSalaryInhouse,
                         setDeveloperSalaryOutsource,
-                        isModalVisible,
-                        setIsModalVisible,
+                        isCalcModalVisible,
+                        setIsCalcModalVisible,
                         isOutsource,
                         setIsOutSource,
                 }}/>
