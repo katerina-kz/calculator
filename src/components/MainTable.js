@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import ProjectFeaturesInputs from "./ProjectFeaturesInputs";
 import './styles.css';
-import '../fonts/fonts.css'
+import '../fonts/fonts.css';
+import '../_inputs.scss';
 import Calculator from "./Calculator";
 import SalaryInputs from "./SalaryInputs";
 import { useLocalStorage } from "./hooks/useLocalStorage";
@@ -18,11 +19,11 @@ function MainTable() {
         "3": 0
     });
     const [platformInput, setPlatformInput] = useState( 0);
-    const [buildingsCount, setBuildingsCount] = useLocalStorage('Building total', 'Building total');
-    const [uniqueBuildings, setUniqueBuildings] = useLocalStorage('Unique buildings', 'Unique buildings');
-    const [uniqueApartment, setUniqueApartment] = useLocalStorage('Unique apt.','Unique apt.');
-    const [tourApartments, setTourApartments] = useLocalStorage('Apt. tours', 'Apt. tours');
-    const [tourAmenities, setTourAmenities] = useLocalStorage('Amenities tours', 'Amenities tours');
+    const [buildingsCount, setBuildingsCount] = useLocalStorage('Building total', '');
+    const [uniqueBuildings, setUniqueBuildings] = useLocalStorage('Unique buildings', '');
+    const [uniqueApartment, setUniqueApartment] = useLocalStorage('Unique apt.','');
+    const [tourApartments, setTourApartments] = useLocalStorage('Apt. tours', '');
+    const [tourAmenities, setTourAmenities] = useLocalStorage('Amenities tours', '');
     const [environmentComplexity, setEnvironmentComplexity] = useLocalStorage('Environment Complexity', 'Rural landscape');
     const [buildingComplexity, setBuildingComplexity] = useLocalStorage("Building Complexity", "Simple geometrical shape");
     // const [furnishingComplexity, setFurnishingComplexity] = useLocalStorage('Furnishing Complexity', 'Min');
@@ -54,6 +55,7 @@ function MainTable() {
         // "7": 0
     });
 
+    const [isDisabledCalc, setIsDisabledCalc] = useState(false);
 
     // -------------- fetch from localstorage --------------- //
 
@@ -111,14 +113,17 @@ function MainTable() {
 
     const clickCalculate = () => {
 
-        document.querySelector('.setting-table').classList.remove('block');
-        document.querySelector('.setting-table').classList.add('transition-left-calc', 'opacity-calc');
-
-        setTimeout(() => {
-            // debugger
-            setLoaderBlock(false);
-            document.querySelector('.calculator-table').classList.remove('none');
-        }, 800);
+        console.log(platformInput);
+        if (platformInput === 0) {
+            setIsDisabledCalc(true);
+        } else {
+            document.querySelector('.setting-table').classList.remove('block');
+            document.querySelector('.setting-table').classList.add('transition-left-calc', 'opacity-calc');
+            setTimeout(() => {
+                setLoaderBlock(false);
+                document.querySelector('.calculator-table').classList.remove('none');
+            }, 800);
+        }
     };
 
     const clearProjectInputs = () => {
@@ -180,7 +185,9 @@ function MainTable() {
                         setEnvironmentComplexity,
                         loaderBlock,
                         totalDays,
-                        setTotalDays}}
+                        setTotalDays,
+                        isDisabledCalc,
+                        setIsDisabledCalc}}
                         click={clickCalculate}
                         clear={clearProjectInputs}
                     />

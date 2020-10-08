@@ -7,7 +7,6 @@ function ProjectFeaturesInputs(props) {
     const [isCheckedMob, setIsCheckedMob] = useState(false);
     const [isCheckedDesk, setIsCheckedDesk] = useState(false);
 
-
     const [open, setOpen] = useState({
         'buildingsCount': false,
         'uniqueBuildings': false,
@@ -16,15 +15,21 @@ function ProjectFeaturesInputs(props) {
         'tourAmenities': false,
     })
 
-    const redExp = {
-        tourAmenities: /[0-9]{0,}\s(amenities|tours)/gm,
-        tourAmenitiesDig: /^[0-9]{0,}$/gm,
-    }
+    useEffect(() => {
+        if (options.buildingsCount) document.querySelector('.buildings-total-label').classList.add('top');
+        if (options.uniqueBuildings) document.querySelector('.unique-buildings-label').classList.add('top');
+        if (options.uniqueApartment) document.querySelector('.unique-apartment-label').classList.add('top');
+        if (options.tourApartments) document.querySelector('.tour-apart-label').classList.add('top');
+        if (options.tourAmenities) document.querySelector('.tour-amen-label').classList.add('top');
+    }, [options.buildingsCount, options.uniqueBuildings, options.uniqueApartment ,options.tourApartments, options.tourAmenities])
 
     useEffect( () => {
         options.platform[1] === 1 ? setIsCheckedWeb(true) : setIsCheckedWeb(false);
         options.platform[2] === 1 ? setIsCheckedMob(true) : setIsCheckedMob(false);
         options.platform[3] === 1 ? setIsCheckedDesk(true) : setIsCheckedDesk(false);
+        if (options.isDisabledCalc !== 0) {
+            options.setIsDisabledCalc(false);
+        }
     }, [ options.platform]);
 
     const onChangeProjectName = (e) => options.setProjectName(e.target.value);
@@ -43,15 +48,23 @@ function ProjectFeaturesInputs(props) {
                 'uniqueBuildings': false,
                 'uniqueApartment': false,
                 'tourApartments': false,
-                'tourAmenities': false
+                'tourAmenities': false,
             });
             set(value.replace(/[^\d]/g, ''));
         }
     }
 
-    // const onChangeFurnishingComplexity = (e) => options.setFurnishingComplexity(e.target.value);
+    const onClick = (classLabel, classInput, state, set) => {
+        // debugger
+        document.querySelector(classLabel).classList.add('top');
+        if (state) {
+           set(state);
+            document.querySelector(classInput).classList.add('white-back');
+        } else set(state);
+    }
 
     const onChangeEnvironmentComplexity = (e) => options.setEnvironmentComplexity(e.target.value);
+    const onChangeBuildingComplexity = (e) => options.setBuildingComplexity(e.target.value);
 
     const onChangePlatform = (e) => {
         e.target.checked === true
@@ -59,20 +72,20 @@ function ProjectFeaturesInputs(props) {
             : options.setPlatform({...options.platform, [e.target.name]: 0})
     }
 
-    const onBlur = (state, set, str) => {
+    const onBlur = (state, set, className) => {
+        if (!state) document.querySelector(className).classList.remove('top');
         setOpen({
-            buildingsCount: false,
-            uniqueBuildings: false,
-            uniqueApartment: false,
-            tourApartments: false,
-            tourAmenities: false
+            'buildingsCount': false,
+            'uniqueBuildings': false,
+            'uniqueApartment': false,
+            'tourApartments': false,
+            'tourAmenities': false,
         });
-        state === '' ? set(str) : set(state);
+        state === '' ? set('') : set(state);
     }
 
-    const onChangeBuildingComplexity = (e) => options.setBuildingComplexity(e.target.value);
 
-
+ // change when breakpoints exist
     useEffect(() => {
         if (options.totalDays) {
             if ((0 <= options.totalDays) && (options.totalDays < 60)) {
@@ -99,20 +112,23 @@ function ProjectFeaturesInputs(props) {
         }
     }, [options.totalDays])
 
+    /********* Return when logic exist **********/
+    // const onChangeFurnishingComplexity = (e) => options.setFurnishingComplexity(e.target.value);
+
     return (
         <div className="setting-table column">
             <div className="settings-table_block ">
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">Platforms<span className='footnote platform_footnote'>*</span></div>
                     <div className="settings-table_item-input">
-                        <input className='platform-input' checked={isCheckedWeb} type='checkbox' value='left' id='id-web' name={"1"}
+                        <input className='platform-input' checked={isCheckedWeb} type='checkbox'  value='left' id='id-web' name={"1"}
                                onChange={onChangePlatform}/>
                         <label htmlFor='id-web' className='platform-input-label web-label'/>
-
-                        <input className='platform-input' checked={isCheckedMob} type='checkbox' value='left' id='id-mobile' name={"2"}
-                               onChange={onChangePlatform}/>
-                        <label htmlFor='id-mobile' className='platform-input-label mobile-label'/>
-
+                        <Tooltip className='platform_tooltip' open={!!options.isDisabledCalc} TransitionProps={{ timeout: 600 }} placement="top" title="Select at least 1 platform" arrow={true}>
+                            <input className='platform-input' checked={isCheckedMob} type='checkbox'  value='left' id='id-mobile' name={"2"}
+                                   onChange={onChangePlatform}/>
+                        </Tooltip>
+                            <label htmlFor='id-mobile' className='platform-input-label mobile-label'/>
                         <input className='platform-input' checked={isCheckedDesk} type='checkbox' value='left' id='id-desktop' name={"3"}
                                onChange={onChangePlatform}/>
                         <label htmlFor='id-desktop' className='platform-input-label desktop-label' />
@@ -121,43 +137,49 @@ function ProjectFeaturesInputs(props) {
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">Buildings</div>
                     <div className="settings-table_item-input">
+                        <label htmlFor="id-tour-am" className='input-text-label buildings-total-label'></label>
                         <Tooltip open={open.buildingsCount} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
                             <input
-                                className='buildings-input number-input'
+                                className='buildings-input number-input buildings-total-input'
                                 type='text'
-                                id='id-building-total'
+                                id='buildings-total-label'
                                 value={options.buildingsCount}
-                                onClick={() => isNaN(options.buildingsCount) ? options.setBuildingsCount('') : options.setBuildingsCount(options.buildingsCount)}
-                                onBlur={() => onBlur(options.buildingsCount, options.setBuildingsCount, 'Buildings count')}
+                                onClick={() => onClick('.buildings-total-label', '.buildings-total-input', options.buildingsCount, options.setBuildingsCount)}
+                                // onClick={() => isNaN(options.buildingsCount) ? options.setBuildingsCount('') : options.setBuildingsCount(options.buildingsCount)}
+                                onBlur={() => onBlur(options.buildingsCount, options.setBuildingsCount, '.buildings-total-label')}
                                 onChange={(e) => onChange(options.setBuildingsCount, 'buildingsCount', e)}
                             />
 
                         </Tooltip>
-                        <span className='footnote building-total_footnote'>*</span>
+                        {/*<span className='footnote building-total_footnote'>*</span>*/}
+                        <label htmlFor="id-tour-am" className='input-text-label unique-buildings-label'></label>
                         <Tooltip open={open.uniqueBuildings} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
                             <input
-                                className='buildings-input number-input'
+                                className='buildings-input number-input unique-buildings-input'
                                 type='text'
-                                id='id-building-total'
+                                id='unique-buildings-label'
                                 value={options.uniqueBuildings}
-                                onClick={() => isNaN(options.uniqueBuildings) ? options.setUniqueBuildings('') : options.setUniqueBuildings(options.uniqueBuildings)}
-                                onBlur={() => onBlur(options.uniqueBuildings, options.setUniqueBuildings, 'Unique buildings')}
+                                onClick={() => onClick('.unique-buildings-label', '.unique-buildings-input', options.uniqueBuildings, options.setUniqueBuildings)}
+                                // onClick={() => isNaN(options.uniqueBuildings) ? options.setUniqueBuildings('') : options.setUniqueBuildings(options.uniqueBuildings)}
+                                onBlur={() => onBlur(options.uniqueBuildings, options.setUniqueBuildings, '.unique-buildings-label')}
                                 onChange={(e) => onChange(options.setUniqueBuildings, 'uniqueBuildings', e)}
                             />
                         </Tooltip>
-                        <span className='footnote unique-buildings_footnote'>*</span>
+                        {/*<span className='footnote unique-buildings_footnote'>*</span>*/}
+                        <label htmlFor="id-tour-am" className='input-text-label unique-apartment-label'></label>
                         <Tooltip open={open.uniqueApartment} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
                             <input
-                                className='buildings-input number-input'
+                                className='buildings-input number-input unique-apartment-input'
                                 type='text'
-                                id='id-building-total'
+                                id='unique-apartment-input'
                                 value={options.uniqueApartment}
-                                onClick={() => isNaN(options.uniqueApartment) ? options.setUniqueApartment('') : options.setUniqueApartment(options.uniqueApartment)}
-                                onBlur={() => onBlur(options.uniqueApartment, options.setUniqueApartment, 'Unique apt.')}
+                                onClick={() => onClick('.unique-apartment-label', '.unique-apartment-input', options.uniqueApartment, options.setUniqueApartment)}
+                                // onClick={() => isNaN(options.uniqueApartment) ? options.setUniqueApartment('') : options.setUniqueApartment(options.uniqueApartment)}
+                                onBlur={() => onBlur(options.uniqueApartment, options.setUniqueApartment, '.unique-apartment-label')}
                                 onChange={(e) => onChange(options.setUniqueApartment, 'uniqueApartment', e)}
                             />
                         </Tooltip>
-                        <span className='footnote unique-apart_footnote'>*</span>
+                        {/*<span className='footnote unique-apart_footnote'>*</span>*/}
                     </div>
                 </div>
                 <div className="settings-table_item">
@@ -182,25 +204,30 @@ function ProjectFeaturesInputs(props) {
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">360 tours</div>
                     <div className="settings-table_item-input tour-block-360">
+                        <label htmlFor="id-tour-ap" className='input-text-label tour-apart-label'></label>
                         <Tooltip open={open.tourApartments} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
                             <input
-                                className='tour-input-360 number-input'
+                                className='tour-input-360 number-input tour-apart-input'
                                 type='text'
                                 id='id-tour-ap'
                                 value={options.tourApartments}
-                                onClick={() => isNaN(options.tourApartments) ? options.setTourApartments('') : options.setTourApartments(options.tourApartments)}
-                                onBlur={() => onBlur(options.tourApartments, options.setTourApartments, 'Apt. tours')}
+                                onClick={() => onClick('.tour-apart-label', '.tour-apart-input', options.tourApartments, options.setTourApartments)}
+                                onBlur={() => onBlur(options.tourApartments, options.setTourApartments, '.tour-apart-label')}
                                 onChange={(e) => onChange(options.setTourApartments, 'tourApartments', e)}
                             />
+                            {/*<span className="input-value">{options.tourApartments}</span>*/}
                         </Tooltip>
+
+                        <label for="id-tour-am" className='input-text-label tour-amen-label'></label>
                         <Tooltip open={open.tourAmenities} TransitionProps={{timeout: 600}}  title="Contains unacceptable characters" arrow={true}>
                             <input
-                                className='tour-input-360 number-input'
+                                className='tour-input-360 number-input tour-amen-input'
                                 type='text'
                                 id='id-tour-am'
                                 value={options.tourAmenities}
-                                onClick={() => redExp.tourAmenities.test(options.tourAmenities) ? options.setTourAmenities('') : options.setTourAmenities(options.tourAmenities)}
-                                onBlur={() => onBlur(options.tourAmenities, options.setTourAmenities, 'Amenities tours')}
+                                onClick={() => onClick('.tour-amen-label', '.tour-amen-input', options.tourAmenities, options.setTourAmenities)}
+                                // onClick={() => redExp.tourAmenities.test(options.tourAmenities) ? options.setTourAmenities('') : options.setTourAmenities(options.tourAmenities)}
+                                onBlur={() => onBlur(options.tourAmenities, options.setTourAmenities, '.tour-amen-label')}
                                 onChange={(e) => onChange(options.setTourAmenities, 'tourAmenities', e)}
                             />
                         </Tooltip>
@@ -291,7 +318,7 @@ function ProjectFeaturesInputs(props) {
                     {
                         options.loaderBlock &&
                         <div className='calculate-box' >
-                            <button className='calculate-button reset-button_styles' onClick={click}>
+                            <button disabled={options.isDisabledCalc} className='calculate-button reset-button_styles' onClick={click}>
                                 <span>Calculate</span>
                             </button>
                         </div>

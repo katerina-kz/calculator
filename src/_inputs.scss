@@ -1,0 +1,76 @@
+//.number-input {
+//  width: 114px;
+//  padding: 10px 15px;
+//  background-color: transparent;
+//  border-radius: 30px;
+//  border: 1px solid #000;
+//  /*color: black;*/
+//  /*font-family: 'fragolino';*/
+//  /*font-weight: 400;*/
+//  /*font-size: 12px;*/
+//  /*line-height: 15px;*/
+//}
+//
+//.number-input:not(:last-of-type) {
+//  margin-right: 20px;
+//}
+//
+//.tour-apart-input:focus {
+//  outline: none;
+//  background-color: #fff;
+//}
+
+@keyframes top {
+  from {
+    top: calc(100% - 27px);
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 17px;
+
+  } to {
+      top: calc(100% - 53px);
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 15px;
+    }
+}
+
+.input-text-label {
+  height: 37px !important;
+  &::after {
+    content: 'Amenities tours ';
+    position: absolute;
+    top: calc(100% - 27px);
+    left: 15px;
+    width: 200px;
+    color: black;
+    font-family: 'fragolino';
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 17px;
+  }
+}
+
+.tour-apart-label::after {
+  content: 'Apt. tour ';
+}
+
+.unique-buildings-label::after {
+  content: 'Unique buildings*';
+}
+
+.unique-apartment-label::after {
+  content: 'Unique apt.*';
+}
+
+.buildings-total-label::after {
+  content: 'Building total*';
+}
+
+.input-text-label.top::after {
+  animation-duration: 0.2s;
+  animation-iteration-count: 1;
+  animation-name: top;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
