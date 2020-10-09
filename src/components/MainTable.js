@@ -55,7 +55,7 @@ function MainTable() {
         // "7": 0
     });
 
-    const [isDisabledCalc, setIsDisabledCalc] = useState(false);
+    // const [isDisabledCalc, setIsDisabledCalc] = useState(false);
 
     // -------------- fetch from localstorage --------------- //
 
@@ -112,18 +112,24 @@ function MainTable() {
 
 
     const clickCalculate = () => {
-
-        console.log(platformInput);
-        if (platformInput === 0) {
-            setIsDisabledCalc(true);
-        } else {
+        // console.log(buildingsCount);
+        // debugger
+        // if (platformInput === 0
+        //     || buildingsCount === 0
+        //     || !buildingsCount
+        //     || uniqueBuildings === 0
+        //     || !uniqueBuildings
+        //     || uniqueApartment === 0
+        //     || !uniqueApartment) {
+        //     setIsDisabledCalc(true);
+        // } else {
             document.querySelector('.setting-table').classList.remove('block');
             document.querySelector('.setting-table').classList.add('transition-left-calc', 'opacity-calc');
             setTimeout(() => {
                 setLoaderBlock(false);
                 document.querySelector('.calculator-table').classList.remove('none');
             }, 800);
-        }
+        // }
     };
 
     const clearProjectInputs = () => {
@@ -186,8 +192,9 @@ function MainTable() {
                         loaderBlock,
                         totalDays,
                         setTotalDays,
-                        isDisabledCalc,
-                        setIsDisabledCalc}}
+                        // isDisabledCalc,
+                        // setIsDisabledCalc
+                    }}
                         click={clickCalculate}
                         clear={clearProjectInputs}
                     />

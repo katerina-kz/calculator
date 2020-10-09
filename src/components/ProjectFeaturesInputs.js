@@ -1,11 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import {Tooltip, Fade} from '@material-ui/core';
+import EnvironmentInput from "./inputs_modules/EnvironmentInput";
 
 function ProjectFeaturesInputs(props) {
     const { options, click, clear } = props;
     const [isCheckedWeb, setIsCheckedWeb] = useState(false);
     const [isCheckedMob, setIsCheckedMob] = useState(false);
     const [isCheckedDesk, setIsCheckedDesk] = useState(false);
+    const [tooltipText, setTooltipText] = useState("Contains unacceptable characters");
+    const [isDisabledCalc, setIsDisabledCalc] = useState(false);
+
+    const [openTooltipText, setOpenTooltipText] = useState({
+        'buildingsCount': '',
+        'uniqueBuildings': '',
+        'uniqueApartment': '',
+        'tourApartments': '',
+        'tourAmenities': '',
+        'platform': '',
+    })
 
     const [open, setOpen] = useState({
         'buildingsCount': false,
@@ -13,7 +25,23 @@ function ProjectFeaturesInputs(props) {
         'uniqueApartment': false,
         'tourApartments': false,
         'tourAmenities': false,
+        'platform': false,
     })
+
+    // useEffect(() => {
+    //     debugger
+    //     if (parseInt(options.buildingsCount) === 0) {
+    //         setOpen({...open, 'buildingsCount': true});
+    //         setTooltipText('Has to be more than 0')
+    //         options.setIsDisabledCalc(true);
+    //     } else if (options.buildingsCount === '') {
+    //
+    //
+    //     } else {
+    //         setTooltipText("Contains unacceptable characters");
+    //         options.setIsDisabledCalc(false);
+    //     }
+    // }, [options.buildingsCount]);
 
     useEffect(() => {
         if (options.buildingsCount) document.querySelector('.buildings-total-label').classList.add('top');
@@ -21,16 +49,39 @@ function ProjectFeaturesInputs(props) {
         if (options.uniqueApartment) document.querySelector('.unique-apartment-label').classList.add('top');
         if (options.tourApartments) document.querySelector('.tour-apart-label').classList.add('top');
         if (options.tourAmenities) document.querySelector('.tour-amen-label').classList.add('top');
-    }, [options.buildingsCount, options.uniqueBuildings, options.uniqueApartment ,options.tourApartments, options.tourAmenities])
+    }, [options.buildingsCount, options.uniqueBuildings, options.uniqueApartment, options.tourApartments, options.tourAmenities])
 
     useEffect( () => {
         options.platform[1] === 1 ? setIsCheckedWeb(true) : setIsCheckedWeb(false);
         options.platform[2] === 1 ? setIsCheckedMob(true) : setIsCheckedMob(false);
         options.platform[3] === 1 ? setIsCheckedDesk(true) : setIsCheckedDesk(false);
-        if (options.isDisabledCalc !== 0) {
-            options.setIsDisabledCalc(false);
-        }
+        // if (isDisabledCalc !== 0) {
+        //     setIsDisabledCalc(false);
+        // }
     }, [ options.platform]);
+
+    useEffect(() => {
+        // debugger
+        if (options.platformInput === 0
+            || options.buildingsCount === 0
+            || !options.buildingsCount
+            || options.uniqueBuildings === 0
+            || !options.uniqueBuildings
+            || options.uniqueApartment === 0
+            || !options.uniqueApartment) {
+            setIsDisabledCalc(true);
+        }
+        console.log(options.buildingsCount, options.uniqueBuildings, options.uniqueApartment, options.tourApartments, options.tourAmenities);
+        console.log(isDisabledCalc);
+    }, [options.platformInput, options.buildingsCount, options.uniqueBuildings, options.uniqueApartment, options.tourApartments, options.tourAmenities])
+
+    useEffect(() => {
+        document.querySelector('.calculate-button').addEventListener('click', function () {
+            if (options.platformInput === 0) {
+                setOpen({...open, platform: true})
+            } else setOpen({...open, platform: false})
+        })
+    }, [options.platformInput]);
 
     const onChangeProjectName = (e) => options.setProjectName(e.target.value);
 
@@ -42,6 +93,14 @@ function ProjectFeaturesInputs(props) {
                 [obj]: true,
             });
             set(value.replace(/[^\d]/g, ''));
+            setOpenTooltipText({...openTooltipText, [obj]:"Contains unacceptable characters"});
+            // setTooltipText("Contains unacceptable characters")
+        } else if (parseInt(value) === 0 || !value) {
+            // set(value.replace(/[^0]{0}/g, ''));
+            setOpen({...open,
+                [obj]: true,
+            });
+            setOpenTooltipText({...openTooltipText, [obj]:'Has to be more than 0'});
         } else {
             setOpen({
                 'buildingsCount': false,
@@ -72,7 +131,7 @@ function ProjectFeaturesInputs(props) {
             : options.setPlatform({...options.platform, [e.target.name]: 0})
     }
 
-    const onBlur = (state, set, className) => {
+    const onBlur = (state, set, className, obj) => {
         if (!state) document.querySelector(className).classList.remove('top');
         setOpen({
             'buildingsCount': false,
@@ -81,7 +140,14 @@ function ProjectFeaturesInputs(props) {
             'tourApartments': false,
             'tourAmenities': false,
         });
-        state === '' ? set('') : set(state);
+        if (state === '') {
+            set('');
+            setOpenTooltipText({...openTooltipText, [obj]:'Has to be more than 0'});
+            setOpen({...open, [obj]: true})
+        } else if (parseInt(state === 0)) {
+            setOpenTooltipText({...openTooltipText, [obj]:"Contains unacceptable characters"});
+            setOpen({...open, [obj]: true})
+        } else set(state);
     }
 
 
@@ -124,7 +190,7 @@ function ProjectFeaturesInputs(props) {
                         <input className='platform-input' checked={isCheckedWeb} type='checkbox'  value='left' id='id-web' name={"1"}
                                onChange={onChangePlatform}/>
                         <label htmlFor='id-web' className='platform-input-label web-label'/>
-                        <Tooltip className='platform_tooltip' open={!!options.isDisabledCalc} TransitionProps={{ timeout: 600 }} placement="top" title="Select at least 1 platform" arrow={true}>
+                        <Tooltip className='platform_tooltip' open={open.platform} TransitionProps={{ timeout: 600 }} placement="top" title="Select at least 1 platform" arrow={true}>
                             <input className='platform-input' checked={isCheckedMob} type='checkbox'  value='left' id='id-mobile' name={"2"}
                                    onChange={onChangePlatform}/>
                         </Tooltip>
@@ -138,48 +204,41 @@ function ProjectFeaturesInputs(props) {
                     <div className="settings-table_item-name">Buildings</div>
                     <div className="settings-table_item-input">
                         <label htmlFor="id-tour-am" className='input-text-label buildings-total-label'></label>
-                        <Tooltip open={open.buildingsCount} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
+                        <Tooltip open={open.buildingsCount} TransitionProps={{ timeout: 600 }} title={openTooltipText.buildingsCount} arrow={true}>
                             <input
                                 className='buildings-input number-input buildings-total-input'
                                 type='text'
                                 id='buildings-total-label'
                                 value={options.buildingsCount}
                                 onClick={() => onClick('.buildings-total-label', '.buildings-total-input', options.buildingsCount, options.setBuildingsCount)}
-                                // onClick={() => isNaN(options.buildingsCount) ? options.setBuildingsCount('') : options.setBuildingsCount(options.buildingsCount)}
-                                onBlur={() => onBlur(options.buildingsCount, options.setBuildingsCount, '.buildings-total-label')}
+                                onBlur={() => onBlur(options.buildingsCount, options.setBuildingsCount, '.buildings-total-label', 'buildingsCount')}
                                 onChange={(e) => onChange(options.setBuildingsCount, 'buildingsCount', e)}
                             />
-
                         </Tooltip>
-                        {/*<span className='footnote building-total_footnote'>*</span>*/}
                         <label htmlFor="id-tour-am" className='input-text-label unique-buildings-label'></label>
-                        <Tooltip open={open.uniqueBuildings} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
+                        <Tooltip open={open.uniqueBuildings} TransitionProps={{ timeout: 600 }} title={openTooltipText.uniqueBuildings} arrow={true}>
                             <input
                                 className='buildings-input number-input unique-buildings-input'
                                 type='text'
                                 id='unique-buildings-label'
                                 value={options.uniqueBuildings}
                                 onClick={() => onClick('.unique-buildings-label', '.unique-buildings-input', options.uniqueBuildings, options.setUniqueBuildings)}
-                                // onClick={() => isNaN(options.uniqueBuildings) ? options.setUniqueBuildings('') : options.setUniqueBuildings(options.uniqueBuildings)}
-                                onBlur={() => onBlur(options.uniqueBuildings, options.setUniqueBuildings, '.unique-buildings-label')}
+                                onBlur={() => onBlur(options.uniqueBuildings, options.setUniqueBuildings, '.unique-buildings-label', 'uniqueBuildings')}
                                 onChange={(e) => onChange(options.setUniqueBuildings, 'uniqueBuildings', e)}
                             />
                         </Tooltip>
-                        {/*<span className='footnote unique-buildings_footnote'>*</span>*/}
                         <label htmlFor="id-tour-am" className='input-text-label unique-apartment-label'></label>
-                        <Tooltip open={open.uniqueApartment} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
+                        <Tooltip open={open.uniqueApartment} TransitionProps={{ timeout: 600 }} title={openTooltipText.uniqueApartment} arrow={true}>
                             <input
                                 className='buildings-input number-input unique-apartment-input'
                                 type='text'
                                 id='unique-apartment-input'
                                 value={options.uniqueApartment}
                                 onClick={() => onClick('.unique-apartment-label', '.unique-apartment-input', options.uniqueApartment, options.setUniqueApartment)}
-                                // onClick={() => isNaN(options.uniqueApartment) ? options.setUniqueApartment('') : options.setUniqueApartment(options.uniqueApartment)}
-                                onBlur={() => onBlur(options.uniqueApartment, options.setUniqueApartment, '.unique-apartment-label')}
+                                onBlur={() => onBlur(options.uniqueApartment, options.setUniqueApartment, '.unique-apartment-label', 'uniqueApartment')}
                                 onChange={(e) => onChange(options.setUniqueApartment, 'uniqueApartment', e)}
                             />
                         </Tooltip>
-                        {/*<span className='footnote unique-apart_footnote'>*</span>*/}
                     </div>
                 </div>
                 <div className="settings-table_item">
@@ -205,29 +264,26 @@ function ProjectFeaturesInputs(props) {
                     <div className="settings-table_item-name">360 tours</div>
                     <div className="settings-table_item-input tour-block-360">
                         <label htmlFor="id-tour-ap" className='input-text-label tour-apart-label'></label>
-                        <Tooltip open={open.tourApartments} TransitionProps={{ timeout: 600 }} title="Contains unacceptable characters" arrow={true}>
+                        <Tooltip open={open.tourApartments} TransitionProps={{ timeout: 600 }} title={openTooltipText.tourApartments} arrow={true}>
                             <input
                                 className='tour-input-360 number-input tour-apart-input'
                                 type='text'
                                 id='id-tour-ap'
                                 value={options.tourApartments}
                                 onClick={() => onClick('.tour-apart-label', '.tour-apart-input', options.tourApartments, options.setTourApartments)}
-                                onBlur={() => onBlur(options.tourApartments, options.setTourApartments, '.tour-apart-label')}
+                                onBlur={() => onBlur(options.tourApartments, options.setTourApartments, '.tour-apart-label', 'tourApartments')}
                                 onChange={(e) => onChange(options.setTourApartments, 'tourApartments', e)}
                             />
-                            {/*<span className="input-value">{options.tourApartments}</span>*/}
                         </Tooltip>
-
                         <label for="id-tour-am" className='input-text-label tour-amen-label'></label>
-                        <Tooltip open={open.tourAmenities} TransitionProps={{timeout: 600}}  title="Contains unacceptable characters" arrow={true}>
+                        <Tooltip open={open.tourAmenities} TransitionProps={{timeout: 600}}  title={openTooltipText.tourAmenities} arrow={true}>
                             <input
                                 className='tour-input-360 number-input tour-amen-input'
                                 type='text'
                                 id='id-tour-am'
                                 value={options.tourAmenities}
                                 onClick={() => onClick('.tour-amen-label', '.tour-amen-input', options.tourAmenities, options.setTourAmenities)}
-                                // onClick={() => redExp.tourAmenities.test(options.tourAmenities) ? options.setTourAmenities('') : options.setTourAmenities(options.tourAmenities)}
-                                onBlur={() => onBlur(options.tourAmenities, options.setTourAmenities, '.tour-amen-label')}
+                                onBlur={() => onBlur(options.tourAmenities, options.setTourAmenities, '.tour-amen-label', 'tourAmenities')}
                                 onChange={(e) => onChange(options.setTourAmenities, 'tourAmenities', e)}
                             />
                         </Tooltip>
@@ -274,43 +330,44 @@ function ProjectFeaturesInputs(props) {
                 {/*        </div>*/}
                 {/*    </div>*/}
                 {/*</div>*/}
-                <div className="settings-table_item">
-                    <div className="settings-table_item-name">Environment complexity</div>
-                    <div className="settings-table_item-input general-input-block environment-complexity-block">
-                        <div className='general-input-div environment-complexity-div environment-complexity-div_left'>
-                            <span className='line line-environment'></span>
-                            <input
-                                className='general-input environment-complexity-input environment-complexity-input_left'
-                                type="radio" id="environment-complexity-min" name="environment-complexity" value="Rural landscape"
-                                onChange={onChangeEnvironmentComplexity}
-                                checked={options.environmentComplexity === "Rural landscape"}/>
-                            <label
-                                className='general-label environment-complexity-label environment-complexity-label_left'
-                                htmlFor="environment-complexity-min">Rural landscape</label>
-                        </div>
-                        <div className='general-input-div environment-complexity-div environment-complexity-div_center'>
-                            <span className='line line-center line-environment'></span>
-                            <input
-                                className='general-input environment-complexity-input environment-complexity-input_center'
-                                type="radio" id="environment-complexity-mid" name="environment-complexity" value="Low town"
-                                onChange={onChangeEnvironmentComplexity}
-                                checked={options.environmentComplexity === "Low town"}/>
-                            <label
-                                className='general-label environment-complexity-label environment-complexity-label_center'
-                                htmlFor="environment-complexity-mid">Low town</label>
-                        </div>
-                        <div className='general-input-div environment-complexity-div environment-complexity-div_right'>
-                            <input
-                                className='general-input environment-complexity-input environment-complexity-input_right'
-                                type="radio" id="environment-complexity-max" name="environment-complexity" value="Dense city"
-                                onChange={onChangeEnvironmentComplexity}
-                                checked={options.environmentComplexity === "Dense city"}/>
-                            <label
-                                className='general-label environment-complexity-label environment-complexity-label_right'
-                                htmlFor="environment-complexity-max">Dense city</label>
-                        </div>
-                    </div>
-                </div>
+                <EnvironmentInput state={options.environmentComplexity} set={options.setEnvironmentComplexity}/>
+                {/*<div className="settings-table_item">*/}
+                {/*    <div className="settings-table_item-name">Environment complexity</div>*/}
+                {/*    <div className="settings-table_item-input general-input-block environment-complexity-block">*/}
+                {/*        <div className='general-input-div environment-complexity-div environment-complexity-div_left'>*/}
+                {/*            <span className='line line-environment'></span>*/}
+                {/*            <input*/}
+                {/*                className='general-input environment-complexity-input environment-complexity-input_left'*/}
+                {/*                type="radio" id="environment-complexity-min" name="environment-complexity" value="Rural landscape"*/}
+                {/*                onChange={onChangeEnvironmentComplexity}*/}
+                {/*                checked={options.environmentComplexity === "Rural landscape"}/>*/}
+                {/*            <label*/}
+                {/*                className='general-label environment-complexity-label environment-complexity-label_left'*/}
+                {/*                htmlFor="environment-complexity-min">Rural landscape</label>*/}
+                {/*        </div>*/}
+                {/*        <div className='general-input-div environment-complexity-div environment-complexity-div_center'>*/}
+                {/*            <span className='line line-center line-environment'></span>*/}
+                {/*            <input*/}
+                {/*                className='general-input environment-complexity-input environment-complexity-input_center'*/}
+                {/*                type="radio" id="environment-complexity-mid" name="environment-complexity" value="Low town"*/}
+                {/*                onChange={onChangeEnvironmentComplexity}*/}
+                {/*                checked={options.environmentComplexity === "Low town"}/>*/}
+                {/*            <label*/}
+                {/*                className='general-label environment-complexity-label environment-complexity-label_center'*/}
+                {/*                htmlFor="environment-complexity-mid">Low town</label>*/}
+                {/*        </div>*/}
+                {/*        <div className='general-input-div environment-complexity-div environment-complexity-div_right'>*/}
+                {/*            <input*/}
+                {/*                className='general-input environment-complexity-input environment-complexity-input_right'*/}
+                {/*                type="radio" id="environment-complexity-max" name="environment-complexity" value="Dense city"*/}
+                {/*                onChange={onChangeEnvironmentComplexity}*/}
+                {/*                checked={options.environmentComplexity === "Dense city"}/>*/}
+                {/*            <label*/}
+                {/*                className='general-label environment-complexity-label environment-complexity-label_right'*/}
+                {/*                htmlFor="environment-complexity-max">Dense city</label>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
                 <div className='actions-block'>
                     <div className='clear-box'>
                         <button className='clear-button reset-button_styles' onClick={clear}>Clear</button>
@@ -318,7 +375,7 @@ function ProjectFeaturesInputs(props) {
                     {
                         options.loaderBlock &&
                         <div className='calculate-box' >
-                            <button disabled={options.isDisabledCalc} className='calculate-button reset-button_styles' onClick={click}>
+                            <button disabled={isDisabledCalc} className='calculate-button reset-button_styles' onClick={click}>
                                 <span>Calculate</span>
                             </button>
                         </div>
