@@ -1,9 +1,8 @@
 import React from 'react';
 
 function EnvironmentInput(props) {
-    const { state, set } = props;
-    console.log(props);
-    const onChangeEnvironmentComplexity = (e) =>  set(e.target.value);
+    const { environmentComplexity, setEnvironmentComplexity } = props;
+    const onChangeEnvironmentComplexity = (e) =>  setEnvironmentComplexity(e.target.value);
 
     return (
         <div className="settings-table_item">
@@ -15,7 +14,7 @@ function EnvironmentInput(props) {
                         className='general-input environment-complexity-input environment-complexity-input_left'
                         type="radio" id="environment-complexity-min" name="environment-complexity" value="Rural landscape"
                         onChange={onChangeEnvironmentComplexity}
-                        checked={state === "Rural landscape"}/>
+                        checked={environmentComplexity === "Rural landscape"}/>
                     <label
                         className='general-label environment-complexity-label environment-complexity-label_left'
                         htmlFor="environment-complexity-min">Rural landscape</label>
@@ -26,7 +25,7 @@ function EnvironmentInput(props) {
                         className='general-input environment-complexity-input environment-complexity-input_center'
                         type="radio" id="environment-complexity-mid" name="environment-complexity" value="Low town"
                         onChange={onChangeEnvironmentComplexity}
-                        checked={state === "Low town"}/>
+                        checked={environmentComplexity === "Low town"}/>
                     <label
                         className='general-label environment-complexity-label environment-complexity-label_center'
                         htmlFor="environment-complexity-mid">Low town</label>
@@ -36,7 +35,7 @@ function EnvironmentInput(props) {
                         className='general-input environment-complexity-input environment-complexity-input_right'
                         type="radio" id="environment-complexity-max" name="environment-complexity" value="Dense city"
                         onChange={onChangeEnvironmentComplexity}
-                        checked={state === "Dense city"}/>
+                        checked={environmentComplexity === "Dense city"}/>
                     <label
                         className='general-label environment-complexity-label environment-complexity-label_right'
                         htmlFor="environment-complexity-max">Dense city</label>

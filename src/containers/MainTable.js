@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import ProjectFeaturesInputs from "./ProjectFeaturesInputs";
-import './styles.css';
+import '../styles/styles.css';
 import '../fonts/fonts.css';
-import '../_inputs.scss';
+import '../styles/scss/style.scss';
 import Calculator from "./Calculator";
 import SalaryInputs from "./SalaryInputs";
 import { useLocalStorage } from "./hooks/useLocalStorage";
@@ -22,8 +22,8 @@ function MainTable() {
     const [buildingsCount, setBuildingsCount] = useLocalStorage('Building total', '');
     const [uniqueBuildings, setUniqueBuildings] = useLocalStorage('Unique buildings', '');
     const [uniqueApartment, setUniqueApartment] = useLocalStorage('Unique apt.','');
-    const [tourApartments, setTourApartments] = useLocalStorage('Apt. tours', '');
-    const [tourAmenities, setTourAmenities] = useLocalStorage('Amenities tours', '');
+    const [tourApartments, setTourApartments] = useLocalStorage('Apt. tours', 0);
+    const [tourAmenities, setTourAmenities] = useLocalStorage('Amenities tours', 0);
     const [environmentComplexity, setEnvironmentComplexity] = useLocalStorage('Environment Complexity', 'Rural landscape');
     const [buildingComplexity, setBuildingComplexity] = useLocalStorage("Building Complexity", "Simple geometrical shape");
     // const [furnishingComplexity, setFurnishingComplexity] = useLocalStorage('Furnishing Complexity', 'Min');
@@ -39,25 +39,18 @@ function MainTable() {
     const [developerSalaryOutsource, setDeveloperSalaryOutsource] = useLocalStorage('Developer Salary Outsource', '');
 
     const [loaderBlock, setLoaderBlock] = useState(true);
+    const [complexity, setComplexity] = useState(false);
     const [projectFeaturesBlock, setProjectFeaturesBlock] = useState(false);
     const [calculateBlock, setCalculateBlock] = useState(true);
     const [salaryBlock, setSalaryBlock] = useState(true);
-
     const [totalDays, setTotalDays] = useState(0);
-
     const [isOutsource, setIsOutSource] = useState({
         "Building count": 0,
         "360-tours count - apartments": 0,
         "360-tours count - amenities": 0,
         "Environment complexity": 0,
-        // "5": 0,
-        // "6": 0,
-        // "7": 0
     });
-
-    // const [isDisabledCalc, setIsDisabledCalc] = useState(false);
-
-    // -------------- fetch from localstorage --------------- //
+    const [classBlock, setClassBlock] = useState('');
 
     // ----- Modal popup -------//
 
@@ -66,7 +59,6 @@ function MainTable() {
     // --------------------------- loader loading --------------------------- //
 
     useEffect(() => {
-
         let evnArray = Object.values(platform);
         let output = 0;
         evnArray.forEach(el => output += el);
@@ -107,31 +99,6 @@ function MainTable() {
 
     }, []);
 
-
-    // --------------------------- CALC loading --------------------------- //
-
-
-    const clickCalculate = () => {
-        // console.log(buildingsCount);
-        // debugger
-        // if (platformInput === 0
-        //     || buildingsCount === 0
-        //     || !buildingsCount
-        //     || uniqueBuildings === 0
-        //     || !uniqueBuildings
-        //     || uniqueApartment === 0
-        //     || !uniqueApartment) {
-        //     setIsDisabledCalc(true);
-        // } else {
-            document.querySelector('.setting-table').classList.remove('block');
-            document.querySelector('.setting-table').classList.add('transition-left-calc', 'opacity-calc');
-            setTimeout(() => {
-                setLoaderBlock(false);
-                document.querySelector('.calculator-table').classList.remove('none');
-            }, 800);
-        // }
-    };
-
     const clearProjectInputs = () => {
         setProjectName('');
         setPlatform({
@@ -140,18 +107,27 @@ function MainTable() {
             "3": 0
         });
         setPlatformInput(0);
-        setBuildingsCount('Building total');
-        setUniqueBuildings('Unique buildings');
-        setUniqueApartment('Unique apt.');
-        setTourApartments('Apt. tours');
-        setTourAmenities('Amenities tours');
+        setBuildingsCount('');
+        setUniqueBuildings('');
+        setUniqueApartment('');
+        setTourApartments('');
+        setTourAmenities('');
         setEnvironmentComplexity('Rural landscape');
         setBuildingComplexity("Simple geometrical shape");
-        // setFurnishingComplexity('Min');
+        // setFurnishingComplexity('');
     }
+
+    useEffect(() => {
+        console.log(document.querySelector('.complexity-examples'), complexity);
+        if (document.querySelector('.complexity-examples') !== null) {
+            document.querySelector('.complexity-examples').classList.remove('middle', 'max', 'simple');
+            document.querySelector('.complexity-examples').classList.add(classBlock);
+        }
+    }, [classBlock]);
 
 
     return (
+
         <>
 
             <div className='table-root'>
@@ -163,6 +139,11 @@ function MainTable() {
                         <h3 className='loader-subtitle'>calculator</h3>
                         <div className="loader-arrow"></div>
                     </div>
+
+                }
+                {
+                    complexity &&
+                        <div className='complexity-examples'></div>
                 }
                 {
                     projectFeaturesBlock &&
@@ -190,12 +171,18 @@ function MainTable() {
                         setTourApartments,
                         setEnvironmentComplexity,
                         loaderBlock,
+                        complexity,
+                        setComplexity,
                         totalDays,
                         setTotalDays,
-                        // isDisabledCalc,
-                        // setIsDisabledCalc
+                        setLoaderBlock,
+                        designerSalaryInhouse,
+                        visualizerSalaryInhouse,
+                        modelerSalaryInhouse,
+                        developerSalaryInhouse,
+                        setIsCalcModalVisible,
+                        setClassBlock
                     }}
-                        click={clickCalculate}
                         clear={clearProjectInputs}
                     />
                 }

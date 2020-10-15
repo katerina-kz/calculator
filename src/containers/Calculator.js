@@ -7,6 +7,7 @@ function Calculator(props) {
     const [email, setEmail] = useLocalStorage('email','');
     const [saveBlock, setSaveBlock] = useState(true);
     const [ isSaveModalVisible, setIsSaveModalVisible ] = useState(false);
+    const [emailTooltip, setEmailTooltip] = useState(false);
 
     const openModalCalc = (e) => {
         e.preventDefault();
@@ -29,9 +30,9 @@ function Calculator(props) {
     const calculateDays = (opt) => {
         switch (opt) {
             case '360 apt. tours':
-                return isNaN(options.tourApartments) ? 0 : options.tourApartments*5;
+                return handle360ApDays();
             case '360 amenities tours':
-                return isNaN(options.tourAmenities) ? 0 : options.tourAmenities*10;
+                return handle360AmDays();
             case 'vantage panoramas':
                 return isNaN(options.buildingsCount) ? 0 : options.buildingsCount*3;
             case 'total visualisation':
@@ -43,7 +44,7 @@ function Calculator(props) {
             case 'buildings':
                return handleBuildingsModeling();
             case 'environment':
-                return 5+(handleEnvironmentComplexity()*5);
+                return handleEnvironmentComplexity();
             case 'total modeling':
                 return handleModDaysTotal();
             case 'initial':
@@ -64,9 +65,9 @@ function Calculator(props) {
     const calculateCost = (opt) => {
         switch(opt) {
             case '360 apt. tours':
-                return handleOutsource360Ap();
+                return handle360ApCost();
             case '360 amenities tours':
-                return handleOutsource360Am();
+                return handle360AmCost();
             case 'vantage panoramas':
                 return isNaN(options.buildingsCount) ? 0 : parseInt((options.buildingsCount*3)*(options.visualizerSalaryInhouse/22));
             case 'total visualisation':
@@ -76,9 +77,9 @@ function Calculator(props) {
             case '3d-plan':
                 return isNaN(options.uniqueApartment) ? 0 : parseInt((parseInt(options.uniqueApartment/3))*(options.modelerSalaryInhouse/22));
             case 'buildings':
-                return handleOutsourceBuildings();
+                return handleBuildingsCost();
             case 'environment':
-                return handleOutsource360Environment();
+                return handle360EnvironmentCost();
             case 'total modeling':
                 return handleModCostTotal();
             case 'initial':
@@ -100,7 +101,15 @@ function Calculator(props) {
             : options.setIsOutSource({...options.isOutsource, [e.target.value]: 0})
     }
 
-    const handleOutsource360Ap = () => {
+    const handle360ApDays = () => {
+        if (options.isOutsource['360-tours count - apartments'] === 1) {
+            return 0;
+        } else {
+            return isNaN(options.tourApartments) ? 0 : options.tourApartments*5;
+        }
+    }
+
+    const handle360ApCost = () => {
         if (options.isOutsource['360-tours count - apartments'] === 1) {
             return isNaN(options.tourApartments) ? 0 : parseInt((options.tourApartments*5)*(options.visualizerSalaryOutsource/22));
         } else {
@@ -108,7 +117,15 @@ function Calculator(props) {
         }
     }
 
-    const handleOutsource360Am = () => {
+    const handle360AmDays = () => {
+        if (options.isOutsource["360-tours count - amenities"] === 1)  {
+            return 0;
+        } else {
+            return isNaN(options.tourAmenities) ? 0 : options.tourAmenities*10;
+        }
+    }
+
+    const handle360AmCost = () => {
         if (options.isOutsource["360-tours count - amenities"] === 1) {
             return isNaN(options.tourAmenities) ? 0 : parseInt((options.tourAmenities*10)*(options.visualizerSalaryOutsource/22));
         } else {
@@ -116,7 +133,7 @@ function Calculator(props) {
         }
     }
 
-    const handleOutsourceBuildings = () => {
+    const handleBuildingsCost = () => {
         if (options.isOutsource['Building count'] === 1) {
             return parseInt((handleBuildingsModeling())*(options.modelerSalaryOutsource/22));;
         } else {
@@ -124,11 +141,11 @@ function Calculator(props) {
         }
     }
 
-    const handleOutsource360Environment = () => {
+    const handle360EnvironmentCost = () => {
         if (options.isOutsource['Environment complexity'] === 1) {
-            return parseInt((5+(handleEnvironmentComplexity()*5))*(options.modelerSalaryOutsource/22));
+            return parseInt(handleEnvironmentComplexity()*(options.modelerSalaryOutsource/22));
         } else {
-            return parseInt((5+(handleEnvironmentComplexity()*5))*(options.modelerSalaryInhouse/22));
+            return parseInt(handleEnvironmentComplexity()*(options.modelerSalaryInhouse/22));
         }
     }
 
@@ -136,25 +153,35 @@ function Calculator(props) {
         const buildCount = isNaN(options.buildingsCount) ? 0 : options.buildingsCount;
         const uniqBuild = isNaN(options.uniqueBuildings) ? 0 : options.uniqueBuildings;
 
-        if (options.platformInput === 1) {
-            return (2*5*buildCount*handleBuildingsComplexity()*(Math.ceil(uniqBuild)));
-        } else if (options.platformInput === 2) {
-            return (3*5*buildCount*handleBuildingsComplexity()*(Math.ceil(uniqBuild)));
-        } else if (options.platformInput === 3) {
-            return (4*5*buildCount*handleBuildingsComplexity()*(Math.ceil(uniqBuild)));
-        } else {
+        if (options.isOutsource['Building count'] === 1) {
             return 0;
+        } else {
+            if (options.platformInput === 1) {
+                return (2*5*buildCount*handleBuildingsComplexity()*(Math.ceil(uniqBuild)));
+            } else if (options.platformInput === 2) {
+                return (3*5*buildCount*handleBuildingsComplexity()*(Math.ceil(uniqBuild)));
+            } else if (options.platformInput === 3) {
+                return (4*5*buildCount*handleBuildingsComplexity()*(Math.ceil(uniqBuild)));
+            } else {
+                return 0;
+            }
         }
+
     }
 
     const handleEnvironmentComplexity = () => {
-        if (options.environmentComplexity === 'Rural landscape') {
-            return 1;
-        } else if (options.environmentComplexity === 'Low town') {
-            return 2;
-        } else if (options.environmentComplexity === 'Dense city') {
-            return 3;
+        if (options.isOutsource['Environment complexity'] === 1) {
+            return 0;
+        } else {
+            if (options.environmentComplexity === 'Rural landscape') {
+                return 5+1*5;
+            } else if (options.environmentComplexity === 'Low town') {
+                return 5+2*5;
+            } else if (options.environmentComplexity === 'Dense city') {
+                return 5+3*5;
+            }
         }
+
     }
 
     const handleBuildingsComplexity = () => {
@@ -180,49 +207,45 @@ function Calculator(props) {
     }
 
     const handleVisDaysTotal = () => {
-        const tourAp = isNaN(options.tourApartments) ? 0 : options.tourApartments;
-        const tourAm =  isNaN(options.tourAmenities) ? 0 : options.tourAmenities;
-        const buildTotal = isNaN(options.buildingsCount) ? 0 : options.buildingsCount;
-        const total = (tourAp*5)+(tourAm*10)+(buildTotal*3);
+        const tourAp = handle360ApDays();
+        const tourAm =  handle360AmDays();
+        const buildTotal = isNaN(options.buildingsCount) ? 0 : options.buildingsCount*3;
+        const total = tourAp+tourAm+buildTotal;
 
         return total;
     }
 
     const handleModDaysTotal = () => {
-        const uniqAp = isNaN(options.uniqueApartment) ? 0 : options.uniqueApartment;
+        const uniqAp2d = isNaN(options.uniqueApartment) ? 0 : Math.ceil(options.uniqueApartment/3);
+        const uniqAp3d = isNaN(options.uniqueApartment) ? 0 : Math.ceil(options.uniqueApartment/3);
         const buildModFunc = handleBuildingsModeling();
         const envCompxFunc = handleEnvironmentComplexity();
         const buildMod = isNaN(buildModFunc) ? 0 : buildModFunc;
         const envCompx = isNaN(envCompxFunc) ? 0 : envCompxFunc;
 
-        const total = parseInt(uniqAp/3) +  parseInt(uniqAp/3) + buildMod + (5+(envCompx*5));
+        const total = uniqAp2d + uniqAp3d + buildMod + envCompx;
         return total;
     }
 
-    const handleVisCostTotal = () => { // -------------------------------------------------change when oursource
+    const handleVisCostTotal = () => {
         const build = isNaN(options.buildingsCount) ? 0 : parseInt((options.buildingsCount*3)*(options.visualizerSalaryInhouse/22));
         return (
-            handleOutsource360Ap()
-            +handleOutsource360Am()
+            handle360ApCost()
+            +handle360AmCost()
             +build
         )
     }
 
-    const handleModCostTotal = () => { // -------------------------------------------------change when oursource
-        const build =  handleOutsourceBuildings();
-        const env = handleOutsource360Environment();
+    const handleModCostTotal = () => {
+        const build =  handleBuildingsCost();
+        const env = handle360EnvironmentCost();
         const des = isNaN(options.uniqueApartment) ? 0 : parseInt((parseInt(options.uniqueApartment/3))*(options.designerSalaryInhouse/22));
         const mod = isNaN(options.uniqueApartment) ? 0 : parseInt((parseInt(options.uniqueApartment/3))*(options.modelerSalaryInhouse/22));
-        // console.log(build, secont, thir, four)
         return (
             build+
             env+
             des+
             mod
-            // handleOutsourceBuildings()
-            // +handleOutsource360Environment()
-            // +parseInt((options.uniqueApartment/3)*(options.designerSalaryInhouse/22))
-            // +parseInt((options.uniqueApartment/3)*(options.modelerSalaryInhouse/22))
         )
     }
 
@@ -291,73 +314,26 @@ function Calculator(props) {
 
     function sendMail (data, e) {
         e.preventDefault();
-
-        let htmlEx = document.createElement('div').innerHTML = data;
-        //     `
-        // Visualization:
-        //     days:
-        //         360 apt. tours: ${data.Visualization.days['360 apt. tours']}
-        //         360 amenities tours: ${data.Visualization.days['360 amenities tours']}
-        //         vantage panoramas: ${data.Visualization.days['vantage panoramas']}
-        //         total visualisation: ${data.Visualization.days['total visualisation']}
-        //
-        //     costs:
-        //         360 apt. tours: ${data.Visualization.costs['360 apt. tours']}
-        //         360 amenities tours: ${data.Visualization.costs['360 apt. tours']}
-        //         vantage panoramas: ${data.Visualization.costs['360 apt. tours']}
-        //         total visualisation: ${data.Visualization.costs['360 apt. tours']}
-        //
-        // Modeling:
-        //     days:
-        //         2d-plan: ${data.Modeling.days['2d-plan']},
-        //         3d-plan: ${data.Modeling.days['3d-plan']},
-        //         buildings: ${data.Modeling.days['buildings']},
-        //         environment: ${data.Modeling.days['environment']},
-        //         total modeling: ${data.Modeling.days['total modeling']},
-        //
-        //     costs:
-        //         2d-plan: ${data.Modeling.costs['2d-plan']},
-        //         3d-plan: ${data.Modeling.costs['3d-plan']},
-        //         buildings: ${data.Modeling.costs['buildings']},
-        //         environment: ${data.Modeling.costs['environment']},
-        //         total modeling: ${data.Modeling.costs['total modeling']},
-        //
-        // Development:
-        //     days:
-        //         initial: ${data.Development.days['initial']},
-        //         internal testing: ${data.Development.days['internal testing']},
-        //         acceptance testing: ${data.Development.days['acceptance testing']},
-        //         total development: ${data.Development.days['total development']},
-        //
-        //     costs:
-        //         initial: ${data.Development.costs['initial']},
-        //         internal testing: ${data.Development.costs['internal testing']},
-        //         acceptance testing: ${data.Development.costs['acceptance testing']},
-        //         total development: ${data.Development.costs['total development']},
-        //
-        // Total:
-        //     days: ${data.Total['days']},
-        //     costs: ${data.Total['costs']},
-       // `
-
-
-
-         let dataPost = new FormData();
-         dataPost.append( "html",  JSON.stringify(htmlEx));
-        console.log(JSON.stringify(htmlEx));
-         // dataPost.append( "json",  JSON.stringify(bodyPost));
-        fetch('mail.php', {
-            method: 'POST',
-            body: dataPost,
-        })
-            .then(function (res) {
-                console.log(res)
+        const regExp = /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){2}\.[a-z]{2,3}$/gm;
+        if (!regExp.test(email)) {
+            setEmailTooltip(true);
+        } else {
+            let htmlEx = document.createElement('div').innerHTML = data;
+            let dataPost = new FormData();
+            dataPost.append("html", JSON.stringify(htmlEx));
+            fetch('mail.php', {
+                method: 'POST',
+                body: dataPost,
             })
-            .catch(function (res) {
-                console.log(res)
-            })
+                .then(function (res) {
+                    console.log(res)
+                })
+                .catch(function (res) {
+                    console.log(res)
+                })
 
-        closeModal();
+            closeModal();
+        }
     };
 
     return (
@@ -502,9 +478,12 @@ function Calculator(props) {
                     setIsSaveModalVisible,
                     email,
                     setEmail,
+                    emailTooltip,
+                    setEmailTooltip,
                 }}
                 click={(e) => sendMail(data, e)}
                 close={closeModal}
+                name={options.projectName}
                 />
             }
         </form>

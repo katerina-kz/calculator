@@ -1,0 +1,150 @@
+.calculator-table + div {
+  display: none;
+}
+
+.salary-table {
+  width: 544px;
+  height: 470px;
+  margin: 0 auto;
+  position: relative;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #F2F2F2;
+}
+
+.input-outsource {
+  text-align: center;
+  position: relative;
+}
+
+.salary-input-inhouse {
+  width: 152px;
+  padding: 7px 18px;
+  &:focus {
+    background: white;
+  }
+}
+
+.salary-input-outsource {
+  width: 40px;
+  padding: 7px 18px;
+  position: relative;
+}
+
+.label-outsource {
+  text-align: left;
+  &::before {
+    display: block;
+    content: 'per building';
+    position: absolute;
+    min-width: 80px;
+    height: 15px;
+    left: 140px;
+    top: calc(50% - 8px);
+    font-family: Fragolino;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  &.mod-outsource::before {
+    content: 'per building';
+  }
+
+  &.vis-outsource::before {
+    content: 'for environment';
+  }
+
+  &.des-outsource::before {
+    content: 'per unique apt';
+  }
+}
+
+.salary-border {
+  position: absolute;
+  height: 246px;
+  width: 2px;
+  content: '';
+  background: black;
+  top: 182px;
+  left: 533px;
+}
+
+.salary-table_title {
+  font-family: Fragolino;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 46px;
+  padding-top: 50px;
+  text-align: center;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.salary-table_block {
+  max-width: 544px;
+  margin: 0 auto;
+}
+
+.salary-table_block_title {
+  margin-top: 45px;
+}
+
+.salary-title {
+  font-family: Fragolino;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.salary-table_item {
+  margin-top: 23px;
+  padding: 0;
+}
+
+.salary-table_item-visualizers {
+  grid-template-rows: 1fr 1fr;
+  grid-row-gap: 23px;
+
+  .salary-table_item-name{
+    grid-row-start: 2;
+  }
+
+  .salary-table_item-input {
+    grid-column-start: 2;
+    grid-row-start: 2;
+  }
+
+  .input-outsource {
+    grid-column-start: 3;
+    grid-row-start: 2;
+    margin: 0;
+  }
+
+  .input-outsource:last-child {
+    grid-column-start: 3;
+    grid-row-start: 1;
+  }
+}
+
+.popup-actions {
+  display: grid;
+  grid-template-rows: 1fr;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.close-button::after {
+  position: absolute;
+  content: '';
+  width: 12px;
+  height: 12px;
+  background-image: url("../../images/close.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  top: 30px;
+  left: initial;
+  right: 30px;
+}

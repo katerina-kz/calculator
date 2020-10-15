@@ -1,0 +1,19 @@
+.complexity-examples {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 680px 680px;
+  height: 100%;
+  width: 100%;
+
+  &.simple {
+  background-image: url("../../images/min.svg");
+  }
+
+  &.middle {
+    background-image: url("../../images/middle.svg");
+  }
+
+  &.max{
+    background-image: url("../../images/max.svg");
+  }
+}

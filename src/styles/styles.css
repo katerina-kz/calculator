@@ -122,6 +122,7 @@ body {
 
 .calculator-table_row {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    min-height: 25px;
 }
 
 .effort {
@@ -537,25 +538,37 @@ button:focus {
 }
 
 .calculate-button {
-    width: 160px;
+    width: 135px;
     height: 36px;
     display: block;
     align-items: center;
     justify-content: center;
     background-color: #000;
-    transform: skewX(-30deg);
+    border: 1px solid #000000;
+    transform: skewX(-34deg);
 }
 
 .calculate-button > span {
-    padding-top: 9px;
+    padding-top: 7px;
     display: block;
     font-weight: 700;
     cursor: pointer;
-    width: 160px;
+    width: 126px;
     height: 36px;
     color: #fff;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    transform: skewX(30deg);
+    transform: skewX(34deg);
+}
+
+.calculate-button:hover {
+    border: 1px solid #000000;
+    background: transparent;
+    color: #000;
+}
+
+.calculate-button:hover > span {
+    color: #000;
 }
 
 /*.calculate-button:disabled {*/
@@ -610,7 +623,7 @@ button:focus {
 .total-block {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 59px;
+    margin-bottom: 30px;
 }
 
 .total-days-box {
@@ -677,7 +690,7 @@ button:focus {
 }
 
 .calculator-table_block {
-    margin-top: 32px;
+    margin-top: 20px;
 }
 
 .calculator-table_item.days {
@@ -840,9 +853,9 @@ button:focus {
 
 /**************** popup *******************/
 
-.calculator-table + div {
-    display: none;
-}
+/*.calculator-table + div {*/
+/*    display: none;*/
+/*}*/
 
 .email-input {
     display: grid !important;
@@ -875,7 +888,7 @@ button:focus {
     display: grid !important;
     place-items: center;
     text-align: center !important;
-    filter: drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.4)) !important;
+    filter: drop-shadow(0px -3px 8px rgba(0, 0, 0, 0.4)) !important;
 }
 
 .MuiTooltip-tooltipPlacementBottom,

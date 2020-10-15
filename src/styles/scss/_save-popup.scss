@@ -1,0 +1,70 @@
+.save-close-button::after {
+  top: 30px;
+  right: 30px;
+  left: initial;
+}
+
+.email-input-block {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  background-color: #F2F2F2;
+  position: relative;
+}
+
+.save-popup-title {
+  font-family: Fragolino;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 46px;
+  text-align: center;
+  letter-spacing: 0.03em;
+  margin-top: 38px;
+}
+
+.email-input {
+  width: 260px;
+  height: 18px;
+  padding: 9px 18px;
+  margin-top: 16px;
+}
+
+.project-name-input {
+  width: 260px;
+  height: 18px;
+  padding: 9px 18px;
+}
+
+.email-input:not(:last-of-type) {
+  margin-right: 0;
+}
+
+.save-modal-button {
+  margin-bottom: 38px;
+  margin-left: 0;
+}
+
+.save-box {
+  display: grid;
+  grid-template-rows: 1fr;
+  justify-content: center;
+}
+
+.MuiTooltip-popper {
+  z-index: 15000 !important;
+}
+
+.MuiTooltip-tooltipPlacementTop {
+  left: 0;
+  width: 200px !important;
+}
+
+.required-star {
+  display: inline-block;
+  position: absolute;
+  bottom: 187px;
+  right: 156px;
+  font-size: 24px;
+
+}

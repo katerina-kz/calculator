@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import MainTable from "./components/MainTable";
+import MainTable from "./containers/MainTable";
 
 function App() {
   return (
