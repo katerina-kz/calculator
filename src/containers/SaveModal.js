@@ -20,7 +20,7 @@ function SaveModal(props) {
             <div className='email-input-block'>
                 <div className='save-popup-title'>Send to e-mail</div>
                 <label htmlFor='email-id' className='save-label'></label>
-                <Tooltip className='platform_tooltip ' open={options.emailTooltip} TransitionProps={{timeout: 600}}
+                <Tooltip className='platform_tooltip' open={options.emailTooltip} TransitionProps={{timeout: 600}}
                          placement="top" title="Contains unacceptable characters" arrow={true}>
                     <input
                         className='email-input number-input'

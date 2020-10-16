@@ -73,9 +73,9 @@ function Calculator(props) {
             case 'total visualisation':
                 return  handleVisCostTotal();
             case '2d-plan':
-                return isNaN(options.uniqueApartment) ? 0 : parseInt((parseInt(options.uniqueApartment/3))*(options.designerSalaryInhouse/22));
+                return isNaN(options.uniqueApartment) ? 0 : parseInt(( Math.ceil(options.uniqueApartment/3))*(options.designerSalaryInhouse/22));
             case '3d-plan':
-                return isNaN(options.uniqueApartment) ? 0 : parseInt((parseInt(options.uniqueApartment/3))*(options.modelerSalaryInhouse/22));
+                return isNaN(options.uniqueApartment) ? 0 : parseInt(( Math.ceil(options.uniqueApartment/3))*(options.modelerSalaryInhouse/22));
             case 'buildings':
                 return handleBuildingsCost();
             case 'environment':
@@ -101,6 +101,26 @@ function Calculator(props) {
             : options.setIsOutSource({...options.isOutsource, [e.target.value]: 0})
     }
 
+    useEffect(() => {
+        if (options.isOutsource['360-tours count - apartments'] === 1 && options.visualizerSalaryOutsource === '') { /// CHANGE!!!!!!!!!!!!!!
+            options.setIsOutsourceFill({...options.isOutsourceFill, visualizer: true});
+            document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
+            options.setIsCalcModalVisible(true);
+        } else if (options.isOutsource['360-tours count - amenities'] === 1 && options.visualizerSalaryOutsource === '') { /// CHANGE!!!!!!!!!!!!!!
+            options.setIsOutsourceFill({...options.isOutsourceFill, visualizer: true});
+            document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
+            options.setIsCalcModalVisible(true);
+        } else if (options.isOutsource['Building count'] === 1 && options.modelerSalaryOutsource === '') {
+            options.setIsOutsourceFill({...options.isOutsourceFill, modelerForBuild: true});
+            document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
+            options.setIsCalcModalVisible(true);
+        } else if (options.isOutsource['Environment complexity'] === 1 && options.modelerForEnvSalaryOutsource === '') {
+            options.setIsOutsourceFill({...options.isOutsourceFill, modelerForEnv: true});
+            document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
+            options.setIsCalcModalVisible(true);
+        }
+    }, [options.isOutsource, options.modelerSalaryOutsource, options.visualizerSalaryOutsource, options.modelerForEnvSalaryOutsource]);
+
     const handle360ApDays = () => {
         if (options.isOutsource['360-tours count - apartments'] === 1) {
             return 0;
@@ -111,7 +131,8 @@ function Calculator(props) {
 
     const handle360ApCost = () => {
         if (options.isOutsource['360-tours count - apartments'] === 1) {
-            return isNaN(options.tourApartments) ? 0 : parseInt((options.tourApartments*5)*(options.visualizerSalaryOutsource/22));
+            return parseInt(options.visualizerSalaryOutsource*options.tourApartments);
+            // return isNaN(options.tourApartments) ? 0 : parseInt((options.tourApartments*5)*(options.visualizerSalaryOutsource/22)); // this is counting by Denis
         } else {
             return isNaN(options.tourApartments) ? 0 : parseInt((options.tourApartments*5)*(options.visualizerSalaryInhouse/22))
         }
@@ -127,7 +148,8 @@ function Calculator(props) {
 
     const handle360AmCost = () => {
         if (options.isOutsource["360-tours count - amenities"] === 1) {
-            return isNaN(options.tourAmenities) ? 0 : parseInt((options.tourAmenities*10)*(options.visualizerSalaryOutsource/22));
+            return parseInt(options.visualizerSalaryOutsource*options.tourAmenities);
+            // return isNaN(options.tourAmenities) ? 0 : parseInt((options.tourAmenities*10)*(options.visualizerSalaryOutsource/22)); // this is counting by Denis
         } else {
             return isNaN(options.tourAmenities) ? 0 : parseInt((options.tourAmenities*10)*(options.visualizerSalaryInhouse/22));
         }
@@ -135,7 +157,8 @@ function Calculator(props) {
 
     const handleBuildingsCost = () => {
         if (options.isOutsource['Building count'] === 1) {
-            return parseInt((handleBuildingsModeling())*(options.modelerSalaryOutsource/22));;
+            // return parseInt((handleBuildingsModeling())*(options.modelerSalaryOutsource/22)); // this is counting by Denis
+            return parseInt(options.modelerSalaryOutsource*options.buildingsCount);
         } else {
             return parseInt((handleBuildingsModeling())*(options.modelerSalaryInhouse/22));
         }
@@ -143,7 +166,8 @@ function Calculator(props) {
 
     const handle360EnvironmentCost = () => {
         if (options.isOutsource['Environment complexity'] === 1) {
-            return parseInt(handleEnvironmentComplexity()*(options.modelerSalaryOutsource/22));
+            // return parseInt(handleEnvironmentComplexity()*(options.modelerSalaryOutsource/22)); // this is counting by Denis
+            return (options.modelerForEnvSalaryOutsource === '') ? 0 : parseInt(options.modelerForEnvSalaryOutsource);
         } else {
             return parseInt(handleEnvironmentComplexity()*(options.modelerSalaryInhouse/22));
         }
@@ -239,13 +263,10 @@ function Calculator(props) {
     const handleModCostTotal = () => {
         const build =  handleBuildingsCost();
         const env = handle360EnvironmentCost();
-        const des = isNaN(options.uniqueApartment) ? 0 : parseInt((parseInt(options.uniqueApartment/3))*(options.designerSalaryInhouse/22));
-        const mod = isNaN(options.uniqueApartment) ? 0 : parseInt((parseInt(options.uniqueApartment/3))*(options.modelerSalaryInhouse/22));
+        const des = isNaN(options.uniqueApartment) ? 0 : parseInt((Math.ceil(options.uniqueApartment/3))*(options.designerSalaryInhouse/22));
+        const mod = isNaN(options.uniqueApartment) ? 0 : parseInt((Math.ceil(options.uniqueApartment/3))*(options.modelerSalaryInhouse/22));
         return (
-            build+
-            env+
-            des+
-            mod
+            build+env+des+mod
         )
     }
 
@@ -258,8 +279,35 @@ function Calculator(props) {
             (handleVisCostTotal()+handleModCostTotal()+handleDevCostTotal())*1.5
         )
     }
+    //
+    // const data = {
+    //     // projectName: '';
+    //     Total: {
+    //         costs: calculateCost('total cost'),
+    //         days: calculateDays('total days'),
+    //         month: calculateDays('total month'),
+    //     },
+    //     Platforms: options.platformInput, //  --------------------------------------- change!!!!!!!!
+    //     'Buildings total': options.buildingsCount,
+    //     'Unique buildings': options.uniqueBuildings,
+    //     'Unique apartments': options.uniqueApartment,
+    //     'Facade complexity': options.buildingComplexity,
+    //     '360 apt tours': options.tourApartments,
+    //     '360 amenities tours': options.tourAmenities,
+    //     'Environment complexity': options.environmentComplexity,
+    //
+    // }
 
     const data = {
+        projectName: options.projectName,
+        Platforms: options.platformInput, //  --------------------------------------- change!!!!!!!!
+        'Buildings total': options.buildingsCount,
+        'Unique buildings': options.uniqueBuildings,
+        'Unique apartments': options.uniqueApartment,
+        'Facade complexity': options.buildingComplexity,
+        '360 apt tours': options.tourApartments,
+        '360 amenities tours': options.tourAmenities,
+        'Environment complexity': options.environmentComplexity,
         Visualization: {
             days: {
                 '360 apt. tours': calculateDays('360 apt. tours'),
@@ -307,6 +355,7 @@ function Calculator(props) {
         Total: {
             'days': calculateDays('total days'),
             'costs': calculateCost('total cost'),
+            'month': calculateDays('total month'),
         },
         Email: email,
     };

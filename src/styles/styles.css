@@ -122,7 +122,7 @@ body {
 
 .calculator-table_row {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    min-height: 25px;
+    min-height: 20px;
 }
 
 .effort {
@@ -677,7 +677,7 @@ button:focus {
     font-family: 'fragolino';
     font-weight: 700;
     font-size: 72px;
-    line-height: 92px;
+    line-height: 76px;
     text-align: center;
     letter-spacing: 0.03em;
 }
@@ -892,12 +892,17 @@ button:focus {
 }
 
 .MuiTooltip-tooltipPlacementBottom,
-.MuiTooltip-tooltipPlacementTop {
+.MuiTooltip-tooltipPlacementTop,
+.MuiTooltip-tooltipPlacementRight {
     font-family: Fragolino !important;
     font-weight: 400 !important;
     font-size: 14px !important;
     line-height: 18px !important;
     color: #EB5757 !important;
+}
+
+.MuiTooltip-tooltipPlacementBottom {
+    top: -6px;
 }
 
 .MuiTooltip-arrow {
@@ -911,6 +916,21 @@ button:focus {
     display: grid;
     place-items: center;
 }
+
+.MuiTooltip-tooltipPlacementRight {
+    width: 118px !important;
+    height: 36px !important;
+    top: 90px;
+    padding: 64px 32px !important;
+    left: 15px;
+}
+
+.MuiTooltip-tooltipPlacementRight > span {
+    transform: rotate(225deg) scale(1.5);
+    left: 4px !important;
+    top: calc(50% - 0.5em) !important;
+}
+
 
 /***************** Footnote ********************/
 

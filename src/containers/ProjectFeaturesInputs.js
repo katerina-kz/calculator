@@ -21,7 +21,6 @@ function ProjectFeaturesInputs(props) {
     });
 
     const openModalCalc = () => {
-        // e.preventDefault();
         document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
         options.setIsCalcModalVisible(true);
     }
@@ -53,30 +52,83 @@ function ProjectFeaturesInputs(props) {
 
     const onChangeProjectName = (e) => options.setProjectName(e.target.value);
 
-    useEffect(() => {
+    // ******************************* awful validation ******************************************** //
 
-        document.querySelector('.calculate-button').addEventListener('click', function () {
-            // debugger
-        if (options.buildingsCount === '') {
+    const validateInputs = () => {
+        if (options.buildingsCount === '' && options.uniqueBuildings === '' && options.uniqueApartment === '' && options.platformInput === 0) {
+            setOpen({...open, uniqueBuildings: true, buildingsCount: true, uniqueApartment: true, platform: true});
+            setOpenTooltipText({...openTooltipText,
+                buildingsCount: 'Has to be more than 0',
+                uniqueBuildings: 'Has to be more than 0',
+                uniqueApartment: 'Has to be more than 0',
+            });
+        } else if (options.buildingsCount === '' && options.uniqueBuildings === '' && options.uniqueApartment === '') {
+            setOpen({...open, uniqueBuildings: true, buildingsCount: true, uniqueApartment: true});
+            setOpenTooltipText({...openTooltipText,
+                buildingsCount: 'Has to be more than 0',
+                uniqueBuildings: 'Has to be more than 0',
+                uniqueApartment: 'Has to be more than 0',
+            });
+        } else if (options.buildingsCount === '' && options.uniqueBuildings === '' && options.platformInput === 0) {
+            setOpen({...open, uniqueBuildings: true, buildingsCount: true, platform: true});
+            setOpenTooltipText({...openTooltipText,
+                buildingsCount: 'Has to be more than 0',
+                uniqueBuildings: 'Has to be more than 0',
+            });
+        } else if (options.buildingsCount === '' && options.uniqueApartment === '' && options.platformInput === 0) {
+            setOpen({...open, buildingsCount: true, uniqueApartment: true, platform: true});
+            setOpenTooltipText({...openTooltipText,
+                buildingsCount: 'Has to be more than 0',
+                uniqueApartment: 'Has to be more than 0',
+            });
+        } else if (options.uniqueBuildings === '' && options.uniqueApartment === '' && options.platformInput === 0) {
+            setOpen({...open, uniqueBuildings: true, uniqueApartment: true, platform: true});
+            setOpenTooltipText({...openTooltipText,
+                uniqueBuildings: 'Has to be more than 0',
+                uniqueApartment: 'Has to be more than 0',
+            });
+        } else if (options.buildingsCount === '' && options.uniqueBuildings === '') {
+            setOpen({...open, uniqueBuildings: true, buildingsCount: true});
+            setOpenTooltipText({...openTooltipText,
+                buildingsCount: 'Has to be more than 0',
+                uniqueBuildings: 'Has to be more than 0',
+            });
+        } else if (options.buildingsCount === '' && options.uniqueApartment === '') {
+            setOpen({...open, buildingsCount: true, uniqueApartment: true});
+            setOpenTooltipText({...openTooltipText,
+                buildingsCount: 'Has to be more than 0',
+                uniqueApartment: 'Has to be more than 0',
+            });
+        } else if (options.uniqueBuildings === '' && options.uniqueApartment === '') {
+            setOpen({...open, uniqueBuildings: true, uniqueApartment: true});
+            setOpenTooltipText({
+                ...openTooltipText,
+                uniqueBuildings: 'Has to be more than 0',
+                uniqueApartment: 'Has to be more than 0',
+            });
+        } else if (options.buildingsCount === '' && options.platformInput === 0) {
+            setOpen({...open, buildingsCount: true, platform: true});
+            setOpenTooltipText({...openTooltipText, buildingsCount: 'Has to be more than 0'});
+        } else if (options.uniqueBuildings === '' && options.platformInput === 0) {
+            setOpen({...open, uniqueBuildings: true, platform: true});
+            setOpenTooltipText({...openTooltipText, uniqueBuildings: 'Has to be more than 0'});
+        } else if (options.uniqueApartment === '' && options.platformInput === 0) {
+            setOpen({...open, uniqueApartment: true, platform: true});
+            setOpenTooltipText({...openTooltipText, uniqueApartment: 'Has to be more than 0'});
+        } else if (options.platformInput === 0) {
+            setOpen({...open, platform: true});
+        } else if (options.buildingsCount === '' ) {
             setOpen({...open, buildingsCount: true});
             setOpenTooltipText({...openTooltipText, buildingsCount: 'Has to be more than 0'});
-        }
-
-        if (options.uniqueBuildings === '') {
+        } else if (options.uniqueBuildings === '') {
             setOpen({...open, uniqueBuildings: true});
             setOpenTooltipText({...openTooltipText, uniqueBuildings: 'Has to be more than 0'});
-        }
-
-        if (options.uniqueApartment === '') {
+        } else if (options.uniqueApartment === '') {
             setOpen({...open, uniqueApartment: true});
             setOpenTooltipText({...openTooltipText, uniqueApartment: 'Has to be more than 0'});
         }
 
-        if (options.platformInput === 0) {
-            setOpen({...open, platform: true});
-        }
-
-        if (options.uniqueBuildings > options.buildingsCount) {
+        if (parseInt(options.uniqueBuildings) > parseInt(options.buildingsCount)) {
             setOpen({...open, uniqueBuildings: true, buildingsCount: true});
             setOpenTooltipText({...openTooltipText,
                 uniqueBuildings: '"Can\'t be more than \'Buildings total\'"',
@@ -85,34 +137,33 @@ function ProjectFeaturesInputs(props) {
 
         // options.setIsSaveModalVisible(true);
             if (options.platformInput !== 0 && options.buildingsCount !== '' && options.uniqueBuildings !== '' && options.uniqueApartment !== ''
-            && options.uniqueBuildings < options.buildingsCount) {
-                if (options.visualizerSalaryInhouse === '' || options.designerSalaryInhouse === '' || options.modelerSalaryInhouse === '' || options.developerSalaryInhouse === '') {
+            && parseInt(options.uniqueBuildings) <= parseInt(options.buildingsCount)) {
+                if (options.visualizerSalaryInhouse === '' || options.designerSalaryInhouse === ''
+                    || options.modelerSalaryInhouse === '' || options.developerSalaryInhouse === '') {
                     openModalCalc();
                 }
-            setOpen({...open, platform: false});
-            setOpen({
-                buildingsCount: false,
-                uniqueBuildings: false,
-                uniqueApartment: false,
-                tourApartments: false,
-                tourAmenities: false,
-                platform: false
-            });
-            document.querySelector('.setting-table').classList.remove('block');
-            document.querySelector('.setting-table').classList.add('transition-left-calc', 'opacity-calc');
-            setTimeout(() => {
-                options.setLoaderBlock(false);
-                options.setComplexity(false);
-                document.querySelector('.calculator-table').classList.remove('none');
-            }, 800);
-        }})
-    }, [options.platformInput, options.buildingsCount, options.uniqueBuildings, options.uniqueApartment,
-        options.visualizerSalaryInhouse, options.designerSalaryInhouse, options.modelerSalaryInhouse, options.developerSalaryInhouse
-    ]);
+                setOpen({...open, platform: false});
+                setOpen({
+                    buildingsCount: false,
+                    uniqueBuildings: false,
+                    uniqueApartment: false,
+                    tourApartments: false,
+                    tourAmenities: false,
+                    platform: false
+                });
+                document.querySelector('.setting-table').classList.remove('block');
+                document.querySelector('.setting-table').classList.add('transition-left-calc', 'opacity-calc');
+                document.querySelector('.calculate-box').classList.add('none');
+                setTimeout(() => {
+                    options.setLoaderBlock(false);
+                    options.setComplexity(false);
+                    document.querySelector('.calculator-table').classList.remove('none');
+                }, 800);
+            }
+};
 
 
     const lessThanMore = (obj, value) => {
-        debugger
         if (obj === 'uniqueBuildings') {
             if (value > parseInt(options.buildingsCount)) {
                 setOpen({
@@ -121,11 +172,18 @@ function ProjectFeaturesInputs(props) {
                 });
                 setOpenTooltipText({...openTooltipText, uniqueBuildings: "Can't be more than 'Buildings total'"});
             } else {
-                setOpen({
-                    ...open,
-                    uniqueBuildings: false,
-                });
-                setOpenTooltipText({...openTooltipText, uniqueBuildings: "", buildingsCount: ""});
+                if (openTooltipText.uniqueBuildings ===  "Can't be more than 'Buildings total'") {
+                    setOpen({
+                        ...open,
+                        uniqueBuildings: false,
+                    });
+                    setOpenTooltipText({...openTooltipText, uniqueBuildings: "", buildingsCount: ""});
+                } else {
+                    setOpen({
+                        ...open,
+                        uniqueBuildings: false,
+                    });
+                }
             }
         } else if (obj === 'buildingsCount') {
             if (value < parseInt(options.uniqueBuildings)) {
@@ -135,20 +193,32 @@ function ProjectFeaturesInputs(props) {
                 });
                 setOpenTooltipText({...openTooltipText, buildingsCount: "Can't be less than 'Unique Buildings'"});
             } else {
-                setOpen({
-                    ...open,
-                    buildingsCount: false,
-                });
-                setOpenTooltipText({...openTooltipText, buildingsCount: "", uniqueBuildings: ""});
+                if (openTooltipText.buildingsCount === "Can't be more than 'Buildings total'") {
+                    setOpen({
+                        ...open,
+                        buildingsCount: false,
+                    });
+                    setOpenTooltipText({...openTooltipText, uniqueBuildings: "", buildingsCount: ""});
+                } else {
+                    setOpen({
+                        ...open,
+                        buildingsCount: false,
+                    });
+                }
             }
-        } else {
+        } else if (obj === 'uniqueApartment') {
             setOpen({
-                'buildingsCount': false,
-                'uniqueBuildings': false,
-                'uniqueApartment': false,
-                'tourApartments': false,
-                'tourAmenities': false,
+                ...open,
+                uniqueApartment: false,
             });
+        // } else {
+        //     setOpen({
+        //         'buildingsCount': false,
+        //         'uniqueBuildings': false,
+        //         'uniqueApartment': false,
+        //         'tourApartments': false,
+        //         'tourAmenities': false,
+        //     });
         }
     }
 
@@ -164,7 +234,13 @@ function ProjectFeaturesInputs(props) {
             setOpenTooltipText({...openTooltipText, [obj]: "Contains unacceptable characters"});
         } else {
             set(value.replace(/[^\d]/g, ''));
-            lessThanMore(obj, value);
+            setOpen({
+                'buildingsCount': false,
+                'uniqueBuildings': false,
+                'uniqueApartment': false,
+                'tourApartments': false,
+                'tourAmenities': false,
+            });
         }
     }
 
@@ -216,7 +292,19 @@ function ProjectFeaturesInputs(props) {
         if (!state) document.querySelector(className).classList.remove('top');
         if (state === '') {
             set('');
-        } else set(state);
+            setOpen({
+                ...open,
+                'tourApartments': false,
+                'tourAmenities': false,
+            });
+        } else {
+            set(state);
+            setOpen({
+               ...open,
+                'tourApartments': false,
+                'tourAmenities': false,
+            });
+        }
     };
 
     const onBlur = (state, set, className, obj) => {
@@ -280,7 +368,7 @@ function ProjectFeaturesInputs(props) {
                 <div className="settings-table_item">
                     <div className="settings-table_item-name">Buildings</div>
                     <div className="settings-table_item-input">
-                        <label htmlFor="id-tour-am" className='input-text-label buildings-total-label'></label>
+                        <label htmlFor="buildings-total-label" className='input-text-label buildings-total-label'></label>
                         <Tooltip open={open.buildingsCount} TransitionProps={{ timeout: 600 }} title={openTooltipText.buildingsCount} arrow={true}>
                             <input
                                 className='buildings-input number-input buildings-total-input'
@@ -322,7 +410,6 @@ function ProjectFeaturesInputs(props) {
                     buildingComplexity={options.buildingComplexity}
                     setBuildingComplexity={options.setBuildingComplexity}
                     setLoaderBlock={options.setLoaderBlock}
-                    complexity={options.complexity}
                     setComplexity={options.setComplexity}
                     setClassBlock={options.setClassBlock}
                 />
@@ -366,14 +453,12 @@ function ProjectFeaturesInputs(props) {
                     <div className='clear-box'>
                         <button className='clear-button reset-button_styles' onClick={clear}>Clear</button>
                     </div>
-                    {
-                        options.loaderBlock && options.complexity ||
-                        <div className='calculate-box'>
-                            <button visible={options.isModalVisible} className='calculate-button reset-button_styles'>
-                                <span>Calculate</span>
-                            </button>
-                        </div>
-                    }
+                    <div className='calculate-box'>
+                        <button visible={options.isModalVisible}  onClick={validateInputs} className='calculate-button reset-button_styles'>
+                            <span>Calculate</span>
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>

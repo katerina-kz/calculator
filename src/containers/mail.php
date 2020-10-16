@@ -11,69 +11,119 @@ $data = json_decode($body, true);
 //var_dump($data, $data['Visualization'], $_POST); exit();
 $recepient = $data['Email'];
 
-$message = "<div style='display: block'>
-                <div>
-                    <div>
-                        <div style='margin: 10px 0'>Visualization</div>
-                    </div>  
-                    <div style='display: flex; justify-content: space-between;'>
-                        <div style='border: 1px solid black; width: 48%; padding: 5px'> 
-                          <b>Days:</b>
-                           <div>360 apt. tours: " . $data['Visualization']['days']['360 apt. tours']. "</div>
-                           <div>360 amenities tours: " . $data['Visualization']['days']['360 amenities tours']. "</div>
-                           <div>vantage panoramas: " . $data['Visualization']['days']['vantage panoramas']. "</div>
-                        </div>
-                        <div style='border: 1px solid black; width: 48%; padding: 5px'> 
-                          <b>Costs:</b>
-                           <div>360 apt. tours: " . $data['Visualization']['costs']['360 apt. tours']. "</div>
-                           <div>360 amenities tours: " . $data['Visualization']['costs']['360 amenities tours']. "</div>
-                           <div>vantage panoramas: " . $data['Visualization']['costs']['vantage panoramas']. "</div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div >
-                        <div style='margin: 10px 0'>Modeling</div>
-                    </div>
-                    <div style='display: flex; justify-content: space-between;'>
-                        <div style='border: 1px solid black; width: 48%; padding: 5px;'> 
-                          <b>Days:</B>
-                           <div>2d-plan: " . $data['Modeling']['days']['2d-plan']. "</div>
-                           <div>3d-plan: " . $data['Modeling']['days']['3d-plan']. "</div>
-                           <div>buildings: " . $data['Modeling']['days']['buildings']. "</div>
-                           <div>environment: " . $data['Modeling']['days']['environment']. "</div>
-                        </div>
-                        <div style='border: 1px solid black; width: 48%; padding: 5px'> 
-                        <b>Costs:</b>
-                           <div>2d-plan: " . $data['Modeling']['costs']['2d-plan']. "</div>
-                           <div>3d-plan: " . $data['Modeling']['costs']['3d-plan']. "</div>
-                           <div>buildings: " . $data['Modeling']['costs']['buildings']. "</div>
-                           <div>environment: " . $data['Modeling']['costs']['environment']. "</div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <div style='margin: 10px 0'>Development</div>
-                    </div>
-                    <div style='display: flex; justify-content: space-between;'>
-                        <div style='border: 1px solid black; width: 48%; padding: 5px'> 
-                          <b>Days:</b>
-                           <div>initial: " . $data['Development']['days']['initial']. "</div>
-                           <div>internal testing: " . $data['Development']['days']['internal testing']. "</div>
-                           <div>acceptance testing: " . $data['Development']['days']['acceptance testing']. "</div>
-                           <div>environment: " . $data['Development']['days']['environment']. "</div>
-                        </div>
-                        <div style='border: 1px solid black; width: 48%; padding: 5px'> 
-                          <b>Costs:</b>
-                           <div>initial: " . $data['Development']['costs']['initial']. "</div>
-                           <div>internal testing: " . $data['Development']['costs']['internal testing']. "</div>
-                           <div>acceptance testing: " . $data['Development']['costs']['acceptance testing']. "</div>
-                           <div>environment: " . $data['Development']['costs']['environment']. "</div>
-                        </div>
-                    </div>
-                </div>
-            </div>";
+$message = "<div>
+  <div>
+    <h1>" . $data['projectName']. "</h2>
+    <br/>
+    <br/>
+    <p>Total: <b>" . $data['Total']['costs']. "</b></p>
+    <p><i>" . $data['Total']['month']. " months (" . $data['Total']['days']. " work days)</i></p>
+  </div>
+  <hr>
+  <div>Platforms: " . $data['Platforms']. "</div>
+  <div>Buildings total: " . $data['Buildings total']. "</div>
+  <div>Unique buildings: " . $data['Unique buildings']. "</div>
+  <div>Unique apartments: " . $data['Unique apartments']. "</div>
+  <div>Facade complexity: " . $data['Facade complexity']. "</div>
+  <div>360 apt tours: " . $data['360 apt tours']. "</div>
+  <div>360 amenities tours: " . $data['360 amenities tours']. "</div>
+  <div>Environment complexity: " . $data['Environment complexity']. "</div>
+  <hr>
+  <div><b>Visualization</b></div>
+  <table >
+    <tr>
+      <td> </td>
+      <td>Days:</td>
+      <td>Costs:</td>
+    </tr> 
+    <tr>
+      <td>360 apt tours</td>
+      <td><i> " . $data['Visualization']['days']['360 apt. tours']. "</i></td>
+        <td><b> " . $data['Visualization']['costs']['360 apt. tours']. "</b></td>
+    </tr>
+    <tr>
+      <td>360 amenities tours</td>
+      <td><i>" . $data['Visualization']['days']['360 amenities tours']. "</i></td>
+      <td><b>" . $data['Visualization']['costs']['360 amenities tours']. "</b></td>
+    </tr>
+     <tr>
+      <td>vantage panoramas</td>
+      <td><i>" . $data['Visualization']['days']['vantage panoramas']. "</i></td>
+      <td><b>" . $data['Visualization']['costs']['vantage panoramas']. "</b></td>
+    </tr>
+    <tr bgcolor=#e6e6e6>
+      <td> </td>
+      <td><i>" . $data['Visualization']['days']['total visualisation']. "</i></td>
+      <td><b>" . $data['Visualization']['costs']['total visualisation']. "</b></td>
+    </tr>
+</table>
+  <br>
+  
+  <div><b>Modeling</b></div>
+  
+    <table >
+    <tr>
+      <td> </td>
+      <td>Days:</td>
+      <td>Costs:</td>
+    </tr> 
+    <tr>
+      <td>2d-plan</td>
+      <td><i> " . $data['Modeling']['days']['2d-plan']. "</i></td>
+        <td><b> " . $data['Modeling']['costs']['2d-plan']. "</b></td>
+    </tr>
+    <tr>
+      <td>3d-plan</td>
+      <td><i>" . $data['Modeling']['days']['3d-plan']. "</i></td>
+      <td><b>" . $data['Modeling']['costs']['3d-plan']. "</b></td>
+    </tr>
+     <tr>
+      <td>buildings</td>
+      <td><i>" . $data['Modeling']['days']['buildings']. "</i></td>
+      <td><b>" . $data['Modeling']['costs']['buildings']. "</b></td>
+    </tr>
+     <tr>
+      <td>environment</td>
+      <td><i>" . $data['Modeling']['days']['environment']. "</i></td>
+      <td><b>" . $data['Modeling']['costs']['environment']. "</b></td>
+    </tr>
+    <tr bgcolor=#e6e6e6>
+      <td> </td>
+      <td><i>" . $data['Modeling']['days']['total modeling']. "</i></td>
+      <td><b>" . $data['Modeling']['costs']['total modeling']. "</b></td>
+    </tr>
+</table>
+  
+  <br>
+  <div><b>Development</b></div>
+    <table >
+    <tr>
+      <td> </td>
+      <td>Days:</td>
+      <td>Costs:</td>
+    </tr> 
+    <tr>
+      <td>initial</td>
+      <td><i> " . $data['Development']['days']['initial']. "</i></td>
+        <td><b> " . $data['Development']['costs']['initial']. "</b></td>
+    </tr>
+    <tr>
+      <td>internal testing</td>
+      <td><i>" . $data['Development']['days']['internal testing']. "</i></td>
+      <td><b>" . $data['Development']['costs']['internal testing']. "</b></td>
+    </tr>
+     <tr>
+      <td>acceptance testing</td>
+      <td><i>" . $data['Development']['days']['acceptance testing']. "</i></td>
+      <td><b>" . $data['Development']['costs']['acceptance testing']. "</b></td>
+    </tr>
+    <tr bgcolor=#e6e6e6>
+      <td> </td>
+      <td><i>" . $data['Development']['days']['total development']. "</i></td>
+      <td><b>" . $data['Development']['costs']['total development']. "</b></td>
+    </tr>
+</table>
+</div>";
 
 
 

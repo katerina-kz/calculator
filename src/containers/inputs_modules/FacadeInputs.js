@@ -1,14 +1,16 @@
 import React, {useEffect} from 'react';
 
 function FacadeInputs(props) {
-    const {buildingComplexity, setBuildingComplexity, setLoaderBlock, setComplexity, complexity, setClassBlock} = props;
+    const {buildingComplexity, setBuildingComplexity, setLoaderBlock, setComplexity, setClassBlock } = props;
 
     const onChangeBuildingComplexity = (e) => setBuildingComplexity(e.target.value);
 
     const handleClick = (className) => {
-        setLoaderBlock(false);
-        setComplexity(true);
-        setClassBlock(className);
+        if (document.querySelector('.calculator-table').classList.contains('none')) {
+            setLoaderBlock(false);
+            setComplexity(true);
+            setClassBlock(className);
+        }
     }
 
     return (
@@ -21,7 +23,7 @@ function FacadeInputs(props) {
                            id="facade-complexity-easy" name="facade-complexity" value="Simple geometrical shape"
                            onChange={onChangeBuildingComplexity}
                            checked={buildingComplexity === "Simple geometrical shape"}
-                            onClick={() => handleClick}/>
+                           onClick={() => handleClick}/>
                     <label className='general-label facade-complexity-label facade-complexity-label_left'
                            htmlFor="facade-complexity-easy" onClick={() => handleClick('simple')}>Simple geometrical shape</label>
                 </div>

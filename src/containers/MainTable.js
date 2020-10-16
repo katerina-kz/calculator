@@ -22,8 +22,8 @@ function MainTable() {
     const [buildingsCount, setBuildingsCount] = useLocalStorage('Building total', '');
     const [uniqueBuildings, setUniqueBuildings] = useLocalStorage('Unique buildings', '');
     const [uniqueApartment, setUniqueApartment] = useLocalStorage('Unique apt.','');
-    const [tourApartments, setTourApartments] = useLocalStorage('Apt. tours', 0);
-    const [tourAmenities, setTourAmenities] = useLocalStorage('Amenities tours', 0);
+    const [tourApartments, setTourApartments] = useLocalStorage('Apt. tours', '');
+    const [tourAmenities, setTourAmenities] = useLocalStorage('Amenities tours', '');
     const [environmentComplexity, setEnvironmentComplexity] = useLocalStorage('Environment Complexity', 'Rural landscape');
     const [buildingComplexity, setBuildingComplexity] = useLocalStorage("Building Complexity", "Simple geometrical shape");
     // const [furnishingComplexity, setFurnishingComplexity] = useLocalStorage('Furnishing Complexity', 'Min');
@@ -35,6 +35,7 @@ function MainTable() {
     const [designerSalaryOutsource, setDesignerSalaryOutsource] = useLocalStorage('Designer Salary Outsource', '');
     const [modelerSalaryInhouse, setModelerSalaryInhouse] = useLocalStorage('Modeler Salary Inhouse', '');
     const [modelerSalaryOutsource, setModelerSalaryOutsource] = useLocalStorage('Modeler Salary Outsource', '');
+    const [modelerForEnvSalaryOutsource, setModelerForEnvSalaryOutsource] = useLocalStorage('Modeler for Environment Salary Outsource', '');
     const [developerSalaryInhouse, setDeveloperSalaryInhouse] = useLocalStorage('Developer Salary Inhouse', '');
     const [developerSalaryOutsource, setDeveloperSalaryOutsource] = useLocalStorage('Developer Salary Outsource', '');
 
@@ -55,6 +56,12 @@ function MainTable() {
     // ----- Modal popup -------//
 
     const [ isCalcModalVisible, setIsCalcModalVisible ] = useState(false);
+    const [isOutsourceFill, setIsOutsourceFill] = useState({
+        designer: false,
+        modelerForEnv: false,
+        modelerForBuild: false,
+        visualizer: false
+    });
 
     // --------------------------- loader loading --------------------------- //
 
@@ -115,21 +122,22 @@ function MainTable() {
         setEnvironmentComplexity('Rural landscape');
         setBuildingComplexity("Simple geometrical shape");
         // setFurnishingComplexity('');
+        document.querySelector('.unique-buildings-label').classList.remove('top');
+        document.querySelector('.unique-apartment-label').classList.remove('top');
+        document.querySelector('.buildings-total-label').classList.remove('top');
+        document.querySelector('.tour-amen-label').classList.remove('top');
+        document.querySelector('.tour-apart-label').classList.remove('top');
     }
 
     useEffect(() => {
-        console.log(document.querySelector('.complexity-examples'), complexity);
         if (document.querySelector('.complexity-examples') !== null) {
             document.querySelector('.complexity-examples').classList.remove('middle', 'max', 'simple');
             document.querySelector('.complexity-examples').classList.add(classBlock);
         }
     }, [classBlock]);
 
-
     return (
-
         <>
-
             <div className='table-root'>
                 {
                     loaderBlock &&
@@ -139,15 +147,14 @@ function MainTable() {
                         <h3 className='loader-subtitle'>calculator</h3>
                         <div className="loader-arrow"></div>
                     </div>
-
                 }
                 {
                     complexity &&
-                        <div className='complexity-examples'></div>
+                    <div className='complexity-examples'></div>
                 }
                 {
                     projectFeaturesBlock &&
-                    <ProjectFeaturesInputs options = {{
+                    <ProjectFeaturesInputs options={{
                         projectName,
                         platform,
                         setProjectName,
@@ -180,8 +187,9 @@ function MainTable() {
                         visualizerSalaryInhouse,
                         modelerSalaryInhouse,
                         developerSalaryInhouse,
+                        modelerForEnvSalaryOutsource,
                         setIsCalcModalVisible,
-                        setClassBlock
+                        setClassBlock,
                     }}
                         clear={clearProjectInputs}
                     />
@@ -204,6 +212,8 @@ function MainTable() {
                         visualizerSalaryOutsource,
                         modelerSalaryInhouse,
                         modelerSalaryOutsource,
+                        modelerForEnvSalaryOutsource,
+                        setModelerForEnvSalaryOutsource,
                         developerSalaryInhouse,
                         developerSalaryOutsource,
                         isCalcModalVisible,
@@ -212,6 +222,8 @@ function MainTable() {
                         setTotalDays,
                         isOutsource,
                         setIsOutSource,
+                        isOutsourceFill, 
+                        setIsOutsourceFill
                     }}/>
                 }
                 {
@@ -223,6 +235,8 @@ function MainTable() {
                         designerSalaryOutsource,
                         modelerSalaryInhouse,
                         modelerSalaryOutsource,
+                        modelerForEnvSalaryOutsource,
+                        setModelerForEnvSalaryOutsource,
                         developerSalaryInhouse,
                         developerSalaryOutsource,
                         setVisualizerSalaryInhouse,
@@ -237,6 +251,8 @@ function MainTable() {
                         setIsCalcModalVisible,
                         isOutsource,
                         setIsOutSource,
+                        isOutsourceFill, 
+                        setIsOutsourceFill
                 }}/>
                 }
             </div>

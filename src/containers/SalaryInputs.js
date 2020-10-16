@@ -2,74 +2,54 @@ import React, { useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useForm } from "react-hook-form";
 import Modal from 'react-awesome-modal';
+import {Tooltip} from "@material-ui/core";
 
 function SalaryInputs(props) {
     const { options } = props;
 
     const { register, handleSubmit, watch, errors } = useForm();
     const onSubmit = data => console.log(data);
-
+    const [isEmptySalaries, setIsEmptySalaries] = useState(false);
     const [helperText, setHelperText] = useState(null);
 
-    // const onChange = (set, obj, e) => {
-    //     set('');
-    //     let value = e.target.value;
-    //     if (isNaN(value)) {
-    //         setOpen({
-    //             ...open,
-    //             [obj]: true,
-    //         });
-    //         set(value.replace(/[^\d]/g, ''));
-    //         setOpenTooltipText({...openTooltipText, [obj]: "Contains unacceptable characters"});
-    //
-    //     } else if (parseInt(value) === 0 || !value) {
-    //         if (obj !== 'tourApartments' && obj !== 'tourAmenities') {
-    //             setOpen({
-    //                 ...open,
-    //                 [obj]: true,
-    //             });
-    //             setOpenTooltipText({...openTooltipText, [obj]: 'Has to be more than 0'});
-    //         } else {
-    //             set(value);
-    //         }
-    //     } else {
-    //         set(value.replace(/[^\d]/g, ''));
-    //         lessThanMore(obj, value);
-    //     }
-    // };
+    useEffect(() => {
+        if (options.isCalcModalVisible) {
+            if (!options.visualizerSalaryInhouse ||
+                !options.modelerSalaryInhouse ||
+                !options.designerSalaryInhouse ||
+                !options.developerSalaryInhouse) {
+                setIsEmptySalaries(true);
+            }
+        } else {
+            setIsEmptySalaries(false)
+        }
+    }, [options.isCalcModalVisible, options.visualizerSalaryInhouse, options.modelerSalaryInhouse, options.developerSalaryInhouse, options.designerSalaryInhouse]);
+
 
     const onChange = (set, e) => {
-        // debugger
+        setIsEmptySalaries(false);
+        options.setIsOutsourceFill({
+            designer: false,
+            modelerForEnv: false,
+            modelerForBuild: false,
+            visualizer: false
+        })
         set('');
         let value = e.target.value;
         if (isNaN(value)) {
-            // setOpen({
-            //     ...open,
-            //     [obj]: true,
-            // });
             set(value.replace(/[^\d]/g, ''));
-            // setOpenTooltipText({...openTooltipText, [obj]: "Contains unacceptable characters"});
-
-        // } else if (parseInt(value) === 0 || !value) {
-        //     if (obj !== 'tourApartments' && obj !== 'tourAmenities') {
-        //         setOpen({
-        //             ...open,
-        //             [obj]: true,
-        //         });
-        //         setOpenTooltipText({...openTooltipText, [obj]: 'Has to be more than 0'});
-        //     } else {
-        //         set(value);
-        //     }
         } else {
             set(value);
-            // lessThanMore(obj, value);
         }
     };
 
-
     const closeModal = () => {
-        document.querySelector('.calculator-table').nextElementSibling.style.display = 'none';
-        options.setIsCalcModalVisible(false);
+        if (isEmptySalaries || options.isOutsourceFill.designer || options.isOutsourceFill.visualizer || options.isOutsourceFill.modelerForBuild || options.isOutsourceFill.modelerForEnv) {
+            return;
+        } else {
+            document.querySelector('.calculator-table').nextElementSibling.style.display = 'none';
+            options.setIsCalcModalVisible(false);
+        }
     }
 
     return (
@@ -90,6 +70,8 @@ function SalaryInputs(props) {
                     <div className="salary-table_item-name">Developers</div>
                     <div className="salary-table_item-input">
                         <label htmlFor='salary-input-inhouse' className='label-inhouse'></label>
+                        <Tooltip className='platform_tooltip' open={isEmptySalaries} TransitionProps={{timeout: 600}}
+                                 placement="right" title="Please, fill in the salaries fields first" arrow={true}>
                         <input
                             className='salary-input-inhouse number-input'
                             type='text'
@@ -98,16 +80,9 @@ function SalaryInputs(props) {
                             value={options.developerSalaryInhouse}
                             onChange={(e) => onChange(options.setDeveloperSalaryInhouse, e)}
                         />
+                        </Tooltip>
                     </div>
-                    {/*<div className="salary-table_item-input input-outsource">*/}
-                    {/*    <input*/}
-                    {/*        className='salary-input-outsource number-input'*/}
-                    {/*        type='text'*/}
-                    {/*        id='developer-Salary-Outsource'*/}
-                    {/*        value={options.developerSalaryOutsource}*/}
-                    {/*        onChange={(e) => onChange(options.setDeveloperSalaryOutsource, e)}*/}
-                    {/*        />*/}
-                    {/*</div>*/}
+
                 </div>
                 <div className="salary-table_item">
                     <div className="salary-table_item-name">2D designers</div>
@@ -124,7 +99,9 @@ function SalaryInputs(props) {
                     </div>
                     <div className="salary-table_item-input input-outsource ">
                         <label htmlFor='designer-Salary-Outsource' className='label-outsource des-outsource'></label>
-                        <input
+                        <Tooltip className='platform_tooltip' open={options.isOutsourceFill.designer} TransitionProps={{timeout: 600}}
+                                 placement="bottom" title="Has to be filled!" arrow={true}>
+                            <input
                             className='salary-input-outsource number-input'
                             type='text'
                             placeholder='0'
@@ -132,6 +109,7 @@ function SalaryInputs(props) {
                             value={options.designerSalaryOutsource}
                             onChange={(e) => onChange(options.setDesignerSalaryOutsource, e)}
                         />
+                        </Tooltip>
                     </div>
                 </div>
                 <div className="salary-table_item">
@@ -149,7 +127,9 @@ function SalaryInputs(props) {
                     </div>
                     <div className="salary-table_item-input input-outsource">
                         <label htmlFor='modeler-Salary-Outsource' className='label-outsource mod-outsource'></label>
-                        <input
+                        <Tooltip className='platform_tooltip' open={options.isOutsourceFill.modelerForBuild} TransitionProps={{timeout: 600}}
+                                 placement="bottom" title="Has to be filled!" arrow={true}>
+                            <input
                             className='salary-input-outsource number-input'
                             type='text'
                             placeholder='0'
@@ -157,6 +137,7 @@ function SalaryInputs(props) {
                             value={options.modelerSalaryOutsource}
                             onChange={(e) => onChange(options.setModelerSalaryOutsource, e)}
                         />
+                        </Tooltip>
                     </div>
                 </div>
                 <div className="salary-table_item salary-table_item-visualizers">
@@ -173,26 +154,32 @@ function SalaryInputs(props) {
                         />
                     </div>
                     <div className="salary-table_item-input input-outsource">
-                        <label htmlFor='designer-Salary-Inhouse' className='label-outsource'></label>
-                        <input
-                            className='salary-input-outsource number-input'
-                            type='text'
-                            placeholder='0'
-                            id='visualizer-Salary-Outsource'
-                            value={options.visualizerSalaryOutsource}
-                            onChange={(e) => onChange(options.visualizerSalaryOutsource, e)}
-                        />
+                        <label htmlFor='visualizer-Salary-Outsource' className='label-outsource'></label>
+                        <Tooltip className='platform_tooltip' open={options.isOutsourceFill.visualizer} TransitionProps={{timeout: 600}}
+                                 placement="bottom" title="Has to be filled!" arrow={true}>
+                            <input
+                                className='salary-input-outsource number-input'
+                                type='text'
+                                placeholder='0'
+                                id='visualizer-Salary-Outsource'
+                                value={options.visualizerSalaryOutsource}
+                                onChange={(e) => onChange(options.setVisualizerSalaryOutsource, e)}
+                            />
+                        </Tooltip>
                     </div>
                     <div className="salary-table_item-input input-outsource">
-                        <label htmlFor='developer-Salary-Outsource' className='label-outsource vis-outsource'></label>
-                        <input
+                        <label htmlFor='modeler-For-Env-Salary-Outsource' className='label-outsource vis-outsource'></label>
+                        <Tooltip className='platform_tooltip' open={options.isOutsourceFill.modelerForEnv} TransitionProps={{timeout: 600}}
+                                 placement="bottom" title="Has to be filled!" arrow={true}>
+                            <input
                             className='salary-input-outsource number-input'
                             type='text'
                             placeholder='0'
-                            id='developer-Salary-Outsource' // change  !!!
-                            value={options.visualizerSalaryOutsource} // change  !!!
-                            onChange={(e) => onChange(options.visualizerSalaryOutsource, e)}  // change !!!
+                            id='modeler-For-Env-Salary-Outsource'
+                            value={options.modelerForEnvSalaryOutsource}
+                            onChange={(e) => onChange(options.setModelerForEnvSalaryOutsource, e)}
                         />
+                        </Tooltip>
                     </div>
                 </div>
             </div>
