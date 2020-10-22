@@ -11,7 +11,7 @@ function FacadeInputs(props) {
             setComplexity(true);
             setClassBlock(className);
         }
-    }
+    };
 
     return (
         <div className="settings-table_item">

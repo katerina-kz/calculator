@@ -1,22 +1,29 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Modal from 'react-awesome-modal';
 import {Tooltip} from "@material-ui/core";
 
 function SaveModal(props) {
-    const { options, click, close, name } = props;
+    const { options, click, close, name, setName } = props;
 
     const onChangeEmail = (e) => {
         options.setEmail(e.target.value);
         options.setEmailTooltip(false);
-    }
+    };
+
+    const onChangeName = (e) => {
+        setName(e.target.value);
+    };
 
     const closeModal = () => {
-        options.setIsSaveModalVisible(false);
         options.setEmailTooltip(false);
-    }
+        setTimeout(() => {
+            options.setIsSaveModalVisible(false);
+        }, 300)
+    };
+
 
     return (
-        <Modal className="modal-save" visible={options.isSaveModalVisible} width="628" height="366" effect="fadeInUp" onClickAway={close}>
+        <Modal className="modal-save" visible={options.isSaveModalVisible} width="628" height="366" effect="fadeInUp" onClickAway={closeModal}>
             <div className='email-input-block'>
                 <div className='save-popup-title'>Send to e-mail</div>
                 <label htmlFor='email-id' className='save-label'></label>
@@ -38,8 +45,7 @@ function SaveModal(props) {
                     placeholder='Project name (optional)'
                     id='project-name-id'
                     value={name}
-                    disabled
-                    // onChange={(e) => onChangeEmail(e)}
+                    onChange={(e) => onChangeName(e)}
                 />
                 <div className='save-box calculate-box'>
                     <div className='adjust-salary_box'>
@@ -52,7 +58,6 @@ function SaveModal(props) {
                     </button>
                 </div>
             </div>
-
         </Modal>
 
     )}

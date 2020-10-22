@@ -4,7 +4,7 @@ import '../styles/styles.css';
 import '../fonts/fonts.css';
 import '../styles/scss/style.scss';
 import Calculator from "./Calculator";
-import SalaryInputs from "./SalaryInputs";
+import SalaryInputs from "./components/modals/SalaryInputs";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useDataFromStorage } from "./hooks/useDataFromStorage";
 import { useGlobalObject } from "./hooks/useGlobalObject";
@@ -39,11 +39,13 @@ function MainTable() {
     const [developerSalaryInhouse, setDeveloperSalaryInhouse] = useLocalStorage('Developer Salary Inhouse', '');
     const [developerSalaryOutsource, setDeveloperSalaryOutsource] = useLocalStorage('Developer Salary Outsource', '');
 
+    // Blocks
     const [loaderBlock, setLoaderBlock] = useState(true);
     const [complexity, setComplexity] = useState(false);
     const [projectFeaturesBlock, setProjectFeaturesBlock] = useState(false);
     const [calculateBlock, setCalculateBlock] = useState(true);
     const [salaryBlock, setSalaryBlock] = useState(true);
+
     const [totalDays, setTotalDays] = useState(0);
     const [isOutsource, setIsOutSource] = useState({
         "Building count": 0,
@@ -52,6 +54,8 @@ function MainTable() {
         "Environment complexity": 0,
     });
     const [classBlock, setClassBlock] = useState('');
+    const [isSaveDisabled, setIsSaveDisabled] = useState(false);
+
 
     // ----- Modal popup -------//
 
@@ -131,7 +135,7 @@ function MainTable() {
 
     useEffect(() => {
         if (document.querySelector('.complexity-examples') !== null) {
-            document.querySelector('.complexity-examples').classList.remove('middle', 'max', 'simple');
+            document.querySelector('.complexity-examples').classList.remove('middle', 'max', 'simple', 'easy-env', 'normal-env', 'hardcore-env');
             document.querySelector('.complexity-examples').classList.add(classBlock);
         }
     }, [classBlock]);
@@ -190,6 +194,8 @@ function MainTable() {
                         modelerForEnvSalaryOutsource,
                         setIsCalcModalVisible,
                         setClassBlock,
+                        isSaveDisabled,
+                        setIsSaveDisabled
                     }}
                         clear={clearProjectInputs}
                     />
@@ -197,6 +203,7 @@ function MainTable() {
                 {   calculateBlock &&
                     <Calculator options = {{
                         projectName,
+                        setProjectName,
                         platform,
                         buildingsCount,
                         buildingComplexity,
@@ -223,7 +230,9 @@ function MainTable() {
                         isOutsource,
                         setIsOutSource,
                         isOutsourceFill, 
-                        setIsOutsourceFill
+                        setIsOutsourceFill,
+                        isSaveDisabled,
+                        setIsSaveDisabled
                     }}/>
                 }
                 {

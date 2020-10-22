@@ -3,6 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import { useForm } from "react-hook-form";
 import Modal from 'react-awesome-modal';
 import {Tooltip} from "@material-ui/core";
+import {Popup} from 'reactjs-popup';
 
 function SalaryInputs(props) {
     const { options } = props;
@@ -25,15 +26,18 @@ function SalaryInputs(props) {
         }
     }, [options.isCalcModalVisible, options.visualizerSalaryInhouse, options.modelerSalaryInhouse, options.developerSalaryInhouse, options.designerSalaryInhouse]);
 
-
-    const onChange = (set, e) => {
-        setIsEmptySalaries(false);
+    const handleTooltipsFalse = () => {
         options.setIsOutsourceFill({
             designer: false,
             modelerForEnv: false,
             modelerForBuild: false,
             visualizer: false
-        })
+        });
+    };
+
+    const onChange = (set, e) => {
+        setIsEmptySalaries(false);
+        handleTooltipsFalse();
         set('');
         let value = e.target.value;
         if (isNaN(value)) {
@@ -43,17 +47,47 @@ function SalaryInputs(props) {
         }
     };
 
+    const handleChecked = () => {
+        if (options.visualizerSalaryOutsource === '' && document.getElementById('id-outsource-apt_tour').checked) {
+            document.getElementById('id-outsource-apt_tour').checked = false;
+            options.setIsOutSource({...options.isOutsource, "360-tours count - apartments": 0})
+        } else if (options.visualizerSalaryOutsource === '' && document.getElementById('id-outsource-am_tour').checked) {
+            document.getElementById('id-outsource-am_tour').checked = false;
+            options.setIsOutSource({...options.isOutsource, '360-tours count - amenities': 0})
+        } else if (options.modelerSalaryOutsource === '' && document.getElementById('id-outsource-build').checked) {
+            document.getElementById('id-outsource-build').checked = false;
+            options.setIsOutSource({...options.isOutsource, 'Building count': 0})
+        } else if (options.modelerForEnvSalaryOutsource === '' && document.getElementById('id-outsource-envinr').checked) {
+            document.getElementById('id-outsource-envinr').checked = false;
+            options.setIsOutSource({...options.isOutsource, 'Environment complexity': 0})
+        }
+
+        if (document.getElementById('id-outsource-apt_tour').checked) options.setIsOutSource({...options.isOutsource, "360-tours count - apartments": 1});
+        if (document.getElementById('id-outsource-am_tour').checked) options.setIsOutSource({...options.isOutsource, "360-tours count - amenities": 1});
+        if (document.getElementById('id-outsource-build').checked) options.setIsOutSource({...options.isOutsource, "Building count": 1});
+        if (document.getElementById('id-outsource-envinr').checked) options.setIsOutSource({...options.isOutsource, "Environment complexity": 1});
+    };
+
     const closeModal = () => {
-        if (isEmptySalaries || options.isOutsourceFill.designer || options.isOutsourceFill.visualizer || options.isOutsourceFill.modelerForBuild || options.isOutsourceFill.modelerForEnv) {
-            return;
+        if ( options.isOutsourceFill.visualizer || options.isOutsourceFill.modelerForBuild || options.isOutsourceFill.modelerForEnv) {
+            handleTooltipsFalse();
+            handleChecked();
+            document.querySelector('.calculator-table').nextElementSibling.style.display = 'none';
+            options.setIsCalcModalVisible(false);
+           // document.querySelector('.MuiTooltip-tooltipPlacementBottom').classList.add('tramble'); // TODO If checkbox doesn't work correct
         } else {
+            handleChecked();
             document.querySelector('.calculator-table').nextElementSibling.style.display = 'none';
             options.setIsCalcModalVisible(false);
         }
-    }
+        // setTimeout(() => {
+        //     if (document.querySelector('.MuiTooltip-tooltipPlacementBottom') && document.querySelector('.MuiTooltip-tooltipPlacementBottom').classList.contains('tramble'))
+        //     document.querySelector('.MuiTooltip-tooltipPlacementBottom').classList.remove('tramble');
+        // }, 200)
+    };
 
     return (
-        <Modal visible={options.isCalcModalVisible} width="828" height="570" effect="fadeInUp" onClickAway={() => closeModal()}>
+        <Modal visible={options.isCalcModalVisible} width="828" height="570" effect='fadeInLeft' onClickAway={() => closeModal()}>
         <div className='salary-table column'>
             <span className='salary-border'></span>
             <div className='salary-table_title column-title'>
@@ -76,13 +110,13 @@ function SalaryInputs(props) {
                             className='salary-input-inhouse number-input'
                             type='text'
                             id='developer-Salary-Inhouse'
-                            placeholder='0'
+                            placeholder='-'
                             value={options.developerSalaryInhouse}
                             onChange={(e) => onChange(options.setDeveloperSalaryInhouse, e)}
                         />
                         </Tooltip>
                     </div>
-
+                    <div className="salary-table_item-input salary-table_item-input-text">No one can replace our developers</div>
                 </div>
                 <div className="salary-table_item">
                     <div className="salary-table_item-name">2D designers</div>
@@ -91,26 +125,27 @@ function SalaryInputs(props) {
                         <input
                             className='salary-input-inhouse number-input'
                             type='text'
-                            placeholder='0'
+                            placeholder='-'
                             id='designer-Salary-Inhouse'
                             value={options.designerSalaryInhouse}
                             onChange={(e) => onChange(options.setDesignerSalaryInhouse, e)}
                         />
                     </div>
-                    <div className="salary-table_item-input input-outsource ">
-                        <label htmlFor='designer-Salary-Outsource' className='label-outsource des-outsource'></label>
-                        <Tooltip className='platform_tooltip' open={options.isOutsourceFill.designer} TransitionProps={{timeout: 600}}
-                                 placement="bottom" title="Has to be filled!" arrow={true}>
-                            <input
-                            className='salary-input-outsource number-input'
-                            type='text'
-                            placeholder='0'
-                            id='designer-Salary-Outsource'
-                            value={options.designerSalaryOutsource}
-                            onChange={(e) => onChange(options.setDesignerSalaryOutsource, e)}
-                        />
-                        </Tooltip>
-                    </div>
+                    <div className="salary-table_item-input salary-table_item-input-text">No one can replace our designers</div>
+                    {/*<div className="salary-table_item-input input-outsource ">*/}
+                        {/*<label htmlFor='designer-Salary-Outsource' className='label-outsource des-outsource'></label>*/}
+                        {/*<Tooltip className='platform_tooltip' open={options.isOutsourceFill.designer} TransitionProps={{timeout: 600}}*/}
+                        {/*         placement="bottom" title="Has to be filled!" arrow={true}>*/}
+                        {/*    <input*/}
+                        {/*        className='salary-input-outsource number-input'*/}
+                        {/*        type='text'*/}
+                        {/*        placeholder='0'*/}
+                        {/*        id='designer-Salary-Outsource'*/}
+                        {/*        value={options.designerSalaryOutsource}*/}
+                        {/*        onChange={(e) => onChange(options.setDesignerSalaryOutsource, e)}*/}
+                        {/*    />*/}
+                        {/*</Tooltip>*/}
+                    {/*</div>*/}
                 </div>
                 <div className="salary-table_item">
                     <div className="salary-table_item-name">3D modellers</div>
@@ -130,13 +165,13 @@ function SalaryInputs(props) {
                         <Tooltip className='platform_tooltip' open={options.isOutsourceFill.modelerForBuild} TransitionProps={{timeout: 600}}
                                  placement="bottom" title="Has to be filled!" arrow={true}>
                             <input
-                            className='salary-input-outsource number-input'
-                            type='text'
-                            placeholder='0'
-                            id='modeler-Salary-Outsource'
-                            value={options.modelerSalaryOutsource}
-                            onChange={(e) => onChange(options.setModelerSalaryOutsource, e)}
-                        />
+                                className='salary-input-outsource number-input'
+                                type='text'
+                                placeholder='0'
+                                id='modeler-Salary-Outsource'
+                                value={options.modelerSalaryOutsource}
+                                onChange={(e) => onChange(options.setModelerSalaryOutsource, e)}
+                            />
                         </Tooltip>
                     </div>
                 </div>
@@ -172,13 +207,16 @@ function SalaryInputs(props) {
                         <Tooltip className='platform_tooltip' open={options.isOutsourceFill.modelerForEnv} TransitionProps={{timeout: 600}}
                                  placement="bottom" title="Has to be filled!" arrow={true}>
                             <input
-                            className='salary-input-outsource number-input'
-                            type='text'
-                            placeholder='0'
-                            id='modeler-For-Env-Salary-Outsource'
-                            value={options.modelerForEnvSalaryOutsource}
-                            onChange={(e) => onChange(options.setModelerForEnvSalaryOutsource, e)}
-                        />
+                                className='salary-input-outsource number-input'
+                                type='text'
+                                placeholder='0'
+                                // id='developer-Salary-Outsource' // change  !!!
+                                // value={options.visualizerSalaryOutsource} // change  !!!
+                                // onChange={(e) => onChange(options.visualizerSalaryOutsource, e)}  // change !!!
+                                id='modeler-For-Env-Salary-Outsource'
+                                value={options.modelerForEnvSalaryOutsource}
+                                onChange={(e) => onChange(options.setModelerForEnvSalaryOutsource, e)}
+                            />
                         </Tooltip>
                     </div>
                 </div>
@@ -200,6 +238,5 @@ function SalaryInputs(props) {
 
     )
 }
-
 
 export default SalaryInputs;

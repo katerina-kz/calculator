@@ -16,4 +16,22 @@
   &.max{
     background-image: url("../../images/max.svg");
   }
+
+  &.easy-env {
+    background-image: url("../../images/ezy-env.svg");
+    background-size: 500px;
+  }
+
+  &.normal-env {
+    background-image: url("../../images/normal-env.svg");
+    background-size: 500px;
+
+  }
+
+  &.hardcore-env {
+    background-image: url("../../images/hardcore-env.svg");
+    background-size: 500px;
+
+  }
 }
+

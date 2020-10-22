@@ -3,7 +3,6 @@ import {Tooltip, Fade} from '@material-ui/core';
 import EnvironmentInput from "./inputs_modules/EnvironmentInput";
 import FacadeInputs from "./inputs_modules/FacadeInputs";
 import FurnishingInput from "./inputs_modules/FurnishingInput";
-import Button from "./components/Button";
 
 function ProjectFeaturesInputs(props) {
     const { options, clear } = props;
@@ -43,6 +42,10 @@ function ProjectFeaturesInputs(props) {
         if (options.tourAmenities) document.querySelector('.tour-amen-label').classList.add('top');
     }, [options.buildingsCount, options.uniqueBuildings, options.uniqueApartment, options.tourApartments, options.tourAmenities])
 
+    useEffect(() => {
+        options.platformInput === 0 ?setOpen({...open, platform: true}) : setOpen({...open, platform: false});
+    }, [options.platformInput]);
+
     useEffect( () => {
         options.platform[1] === 1 ? setIsCheckedWeb(true) : setIsCheckedWeb(false);
         options.platform[2] === 1 ? setIsCheckedMob(true) : setIsCheckedMob(false);
@@ -51,6 +54,17 @@ function ProjectFeaturesInputs(props) {
     }, [options.platform]);
 
     const onChangeProjectName = (e) => options.setProjectName(e.target.value);
+
+    useEffect(() => {
+        Object.values(open).find(value => {
+            if (value === true) {
+                options.setIsSaveDisabled(true);
+            } else {
+                options.setIsSaveDisabled(false);
+            }
+        })
+    }, [open]);
+
 
     // ******************************* awful validation ******************************************** //
 
@@ -235,9 +249,7 @@ function ProjectFeaturesInputs(props) {
         } else {
             set(value.replace(/[^\d]/g, ''));
             setOpen({
-                'buildingsCount': false,
-                'uniqueBuildings': false,
-                'uniqueApartment': false,
+                ...open,
                 'tourApartments': false,
                 'tourAmenities': false,
             });
@@ -283,8 +295,14 @@ function ProjectFeaturesInputs(props) {
     const onChangePlatform = (e) => {
         if (e.target.checked === true) {
             options.setPlatform({...options.platform, [e.target.name]: 1});
+            if (options.platformInput > 0) {
+                setOpen({...open, platform: false});
+            }
         } else {
             options.setPlatform({...options.platform, [e.target.name]: 0});
+            if (options.platformInput === 0) {
+                setOpen({...open, platform: true});
+            }
         }
     };
 
@@ -428,7 +446,7 @@ function ProjectFeaturesInputs(props) {
                                 onChange={(e) => onChange360(options.setTourApartments, 'tourApartments', e)}
                             />
                         </Tooltip>
-                        <label for="id-tour-am" className='input-text-label tour-amen-label'></label>
+                        <label htmlFor="id-tour-am" className='input-text-label tour-amen-label'></label>
                         <Tooltip open={open.tourAmenities} TransitionProps={{timeout: 600}}  title={openTooltipText.tourAmenities} arrow={true}>
                             <input
                                 className='tour-input-360 number-input tour-amen-input'
@@ -448,6 +466,8 @@ function ProjectFeaturesInputs(props) {
                     environmentComplexity={options.environmentComplexity}
                     setEnvironmentComplexity={options.setEnvironmentComplexity}
                     setLoaderBlock={options.setLoaderBlock}
+                    setComplexity={options.setComplexity}
+                    setClassBlock={options.setClassBlock}
                 />
                 <div className='actions-block'>
                     <div className='clear-box'>

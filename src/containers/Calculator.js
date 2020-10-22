@@ -1,6 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import SaveModal from "./SaveModal";
+import React, {useEffect, useState, useCallback} from 'react';
+import SaveModal from "./components/modals/SaveModal";
 import {useLocalStorage} from "./hooks/useLocalStorage";
+import SuccessModal from "./components/modals/SuccessModal";
+import Modal from "react-awesome-modal";
 
 function Calculator(props) {
     const { options } = props;
@@ -8,6 +10,8 @@ function Calculator(props) {
     const [saveBlock, setSaveBlock] = useState(true);
     const [ isSaveModalVisible, setIsSaveModalVisible ] = useState(false);
     const [emailTooltip, setEmailTooltip] = useState(false);
+    const [isSuccessEmail, setIsSuccessEmail] = useState(false);
+
 
     const openModalCalc = (e) => {
         e.preventDefault();
@@ -17,8 +21,13 @@ function Calculator(props) {
 
     const openModalSave = (e) => {
         e.preventDefault();
-        document.querySelector('.actions-calc_block').nextElementSibling.style.display = 'block';
-        setIsSaveModalVisible(true);
+        if (options.isSaveDisabled) {
+            return;
+        } else {
+            document.querySelector('.actions-calc_block').nextElementSibling.style.display = 'block';
+            setIsSaveModalVisible(true);
+        }
+
     }
 
     const closeModal = () => {
@@ -93,34 +102,39 @@ function Calculator(props) {
             case 'total cost':
                 return options.developerSalaryInhouse === "" ? 0 : handleProjectTotalCost();
         }
-    }
+    };
 
     const handleOutsource = (e) => {
-        e.target.checked === true
-            ? options.setIsOutSource({...options.isOutsource, [e.target.value]: 1})
-            : options.setIsOutSource({...options.isOutsource, [e.target.value]: 0})
-    }
-
-    useEffect(() => {
-        if (options.isOutsource['360-tours count - apartments'] === 1 && options.visualizerSalaryOutsource === '') { /// CHANGE!!!!!!!!!!!!!!
-            options.setIsOutsourceFill({...options.isOutsourceFill, visualizer: true});
+         if (options.visualizerSalaryOutsource === '' && e.currentTarget.id === 'id-outsource-apt_tour') {
+            setTimeout(() => {
+                options.setIsOutsourceFill({...options.isOutsourceFill, visualizer: true});
+            }, 300);
             document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
             options.setIsCalcModalVisible(true);
-        } else if (options.isOutsource['360-tours count - amenities'] === 1 && options.visualizerSalaryOutsource === '') { /// CHANGE!!!!!!!!!!!!!!
-            options.setIsOutsourceFill({...options.isOutsourceFill, visualizer: true});
+        } else if (options.visualizerSalaryOutsource === '' && e.currentTarget.id === 'id-outsource-am_tour') {
+            setTimeout(() => {
+                options.setIsOutsourceFill({...options.isOutsourceFill, visualizer: true});
+            }, 300);
             document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
             options.setIsCalcModalVisible(true);
-        } else if (options.isOutsource['Building count'] === 1 && options.modelerSalaryOutsource === '') {
-            options.setIsOutsourceFill({...options.isOutsourceFill, modelerForBuild: true});
+         } else if (options.modelerSalaryOutsource === '' && e.currentTarget.id === 'id-outsource-build') {
+             setTimeout(() => {
+                 options.setIsOutsourceFill({...options.isOutsourceFill, modelerForBuild: true});
+             }, 300);
+             document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
+             options.setIsCalcModalVisible(true);
+        } else if (options.modelerForEnvSalaryOutsource === '' && e.currentTarget.id === 'id-outsource-envinr') {
+            setTimeout(() => {
+                options.setIsOutsourceFill({...options.isOutsourceFill, modelerForEnv: true});
+            }, 300);
             document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
             options.setIsCalcModalVisible(true);
-        } else if (options.isOutsource['Environment complexity'] === 1 && options.modelerForEnvSalaryOutsource === '') {
-            options.setIsOutsourceFill({...options.isOutsourceFill, modelerForEnv: true});
-            document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
-            options.setIsCalcModalVisible(true);
+        } else {
+            e.target.checked === true
+                ? options.setIsOutSource({...options.isOutsource, [e.target.value]: 1})
+                : options.setIsOutSource({...options.isOutsource, [e.target.value]: 0})
         }
-    }, [options.isOutsource, options.modelerSalaryOutsource, options.visualizerSalaryOutsource, options.modelerForEnvSalaryOutsource]);
-
+    };
     const handle360ApDays = () => {
         if (options.isOutsource['360-tours count - apartments'] === 1) {
             return 0;
@@ -132,7 +146,7 @@ function Calculator(props) {
     const handle360ApCost = () => {
         if (options.isOutsource['360-tours count - apartments'] === 1) {
             return parseInt(options.visualizerSalaryOutsource*options.tourApartments);
-            // return isNaN(options.tourApartments) ? 0 : parseInt((options.tourApartments*5)*(options.visualizerSalaryOutsource/22)); // this is counting by Denis
+            // return isNaN(options.tourApartments) ? 0 : parseInt((options.tourApartments*5)*(options.visualizerSalaryOutsource/22)); // TODO  this is counting by Denis
         } else {
             return isNaN(options.tourApartments) ? 0 : parseInt((options.tourApartments*5)*(options.visualizerSalaryInhouse/22))
         }
@@ -149,7 +163,7 @@ function Calculator(props) {
     const handle360AmCost = () => {
         if (options.isOutsource["360-tours count - amenities"] === 1) {
             return parseInt(options.visualizerSalaryOutsource*options.tourAmenities);
-            // return isNaN(options.tourAmenities) ? 0 : parseInt((options.tourAmenities*10)*(options.visualizerSalaryOutsource/22)); // this is counting by Denis
+            // return isNaN(options.tourAmenities) ? 0 : parseInt((options.tourAmenities*10)*(options.visualizerSalaryOutsource/22)); // TODO this is counting by Denis
         } else {
             return isNaN(options.tourAmenities) ? 0 : parseInt((options.tourAmenities*10)*(options.visualizerSalaryInhouse/22));
         }
@@ -157,7 +171,7 @@ function Calculator(props) {
 
     const handleBuildingsCost = () => {
         if (options.isOutsource['Building count'] === 1) {
-            // return parseInt((handleBuildingsModeling())*(options.modelerSalaryOutsource/22)); // this is counting by Denis
+            // return parseInt((handleBuildingsModeling())*(options.modelerSalaryOutsource/22)); //  TODO this is counting by Denis
             return parseInt(options.modelerSalaryOutsource*options.buildingsCount);
         } else {
             return parseInt((handleBuildingsModeling())*(options.modelerSalaryInhouse/22));
@@ -166,7 +180,7 @@ function Calculator(props) {
 
     const handle360EnvironmentCost = () => {
         if (options.isOutsource['Environment complexity'] === 1) {
-            // return parseInt(handleEnvironmentComplexity()*(options.modelerSalaryOutsource/22)); // this is counting by Denis
+            // return parseInt(handleEnvironmentComplexity()*(options.modelerSalaryOutsource/22)); // TODO this is counting by Denis
             return (options.modelerForEnvSalaryOutsource === '') ? 0 : parseInt(options.modelerForEnvSalaryOutsource);
         } else {
             return parseInt(handleEnvironmentComplexity()*(options.modelerSalaryInhouse/22));
@@ -194,19 +208,22 @@ function Calculator(props) {
     }
 
     const handleEnvironmentComplexity = () => {
-        if (options.isOutsource['Environment complexity'] === 1) {
+        if (options.platformInput === 0) {
             return 0;
         } else {
-            if (options.environmentComplexity === 'Rural landscape') {
-                return 5+1*5;
-            } else if (options.environmentComplexity === 'Low town') {
-                return 5+2*5;
-            } else if (options.environmentComplexity === 'Dense city') {
-                return 5+3*5;
+            if (options.isOutsource['Environment complexity'] === 1) {
+                return 0;
+            } else {
+                if (options.environmentComplexity === 'Rural landscape') {
+                    return 5+1*5;
+                } else if (options.environmentComplexity === 'Low town') {
+                    return 5+2*5;
+                } else if (options.environmentComplexity === 'Dense city') {
+                    return 5+3*5;
+                }
             }
         }
-
-    }
+    };
 
     const handleBuildingsComplexity = () => {
         if (options.buildingComplexity === 'Simple geometrical shape') {
@@ -216,7 +233,7 @@ function Calculator(props) {
         } else if (options.buildingComplexity === 'Baroque edifice') {
             return 2;
         }
-    }
+    };
 
 
     const handleProjectTotal = () => {
@@ -275,10 +292,32 @@ function Calculator(props) {
     }
 
     const handleProjectTotalCost = () => {
-        return (
-            (handleVisCostTotal()+handleModCostTotal()+handleDevCostTotal())*1.5
-        )
-    }
+        const totalSum = (handleVisCostTotal()+handleModCostTotal()+handleDevCostTotal())*1.5;
+        // ------------------------------------------------------------------------------------------ !!! TOGO показать Оле эту жуть !!!
+
+        // const time = 2000;
+        // const step = 0.5;
+        // console.log(totalSum, step);
+        // let initial = 0;
+        // //
+        // let t = Math.round(time/(totalSum/step));
+        // // console.log(totalSum);
+        // let interval = setInterval(() => {
+        //     // debugger
+        //     initial = initial + step;
+        //     // console.log(initial);
+        //     if (initial >= totalSum) {
+        //         // console.log(initial);
+        //
+        //         clearInterval(interval);
+        //     }
+        //     if (document.querySelector('.total-cost')) document.querySelector('.total-cost').innerHTML = initial;
+        //
+        // }, t);
+        // // console.log(initial);
+
+        return totalSum;
+    };
     //
     // const data = {
     //     // projectName: '';
@@ -382,11 +421,13 @@ function Calculator(props) {
                 })
 
             closeModal();
+            setIsSuccessEmail(true);
         }
     };
 
     return (
         <form className='calculator-table column none'>
+            <div className='wrapper'>
             <span className='arrow-square calc'></span>
             <div className='calculator-table_title total-block'>
                 <div className='total-days-box'>
@@ -415,7 +456,7 @@ function Calculator(props) {
                 <div className="calculator-table_item days">{calculateDays('360 apt. tours')} days</div>
                 <div className="calculator-table_item cost">${calculateCost('360 apt. tours')}</div>
                 <div className="calculator-table_item outsource">
-                    <input className='outsource-input' type='checkbox' value={'360-tours count - apartments'} id='id-outsource-apt_tour' name='outsource-name' onChange={handleOutsource}/>
+                    <input className='outsource-input' type='checkbox' value={'360-tours count - apartments'} id='id-outsource-apt_tour' name='outsource-name' onChange={(e) => handleOutsource(e, options.visualizerSalaryOutsource, 'visualizer')}/>
                     <label htmlFor='id-outsource-apt_tour' className='outsource-input-label outsource-label'/>
                 </div>
             </div>
@@ -424,7 +465,7 @@ function Calculator(props) {
                 <div className="calculator-table_item days">{calculateDays('360 amenities tours')} days</div>
                 <div className="calculator-table_item cost">${calculateCost('360 amenities tours')}</div>
                 <div className="calculator-table_item outsource">
-                    <input className='outsource-input' type='checkbox' value={'360-tours count - amenities'} id='id-outsource-am_tour' name='outsource-name' onChange={handleOutsource}/>
+                    <input className='outsource-input' type='checkbox' value={'360-tours count - amenities'} id='id-outsource-am_tour' name='outsource-name' onChange={(e) => handleOutsource(e, options.visualizerSalaryOutsource, 'visualizer')}/>
                     <label htmlFor='id-outsource-am_tour' className='outsource-input-label outsource-label'/>
                 </div>
             </div>
@@ -469,7 +510,7 @@ function Calculator(props) {
                 <div className="calculator-table_item days">{calculateDays('buildings')} days</div>
                 <div className="calculator-table_item cost">${calculateCost('buildings')}</div>
                 <div className="calculator-table_item outsource">
-                    <input className='outsource-input' type='checkbox' value={'Building count'} id='id-outsource-build' name='outsource-name' onChange={handleOutsource}/>
+                    <input className='outsource-input' type='checkbox' value={'Building count'} id='id-outsource-build' name='outsource-name' onChange={(e) => handleOutsource(e, options.modelerSalaryOutsource, 'modelerForBuild')}/>
                     <label htmlFor='id-outsource-build' className='outsource-input-label outsource-label'/>
                 </div>
             </div>
@@ -478,7 +519,7 @@ function Calculator(props) {
                 <div className="calculator-table_item days">{calculateDays('environment')} days</div>
                 <div className="calculator-table_item cost">${calculateCost('environment')}</div>
                 <div className="calculator-table_item outsource">
-                    <input className='outsource-input' type='checkbox' value={'Environment complexity'}  id='id-outsource-envinr' name='outsource-name' onChange={handleOutsource}/>
+                    <input className='outsource-input' type='checkbox' value={'Environment complexity'}  id='id-outsource-envinr' name='outsource-name' onChange={(e) => handleOutsource(e, options.modelerForEnvSalaryOutsource, 'modelerForEnv')}/>
                     <label htmlFor='id-outsource-envinr' className='outsource-input-label outsource-label'/>
                 </div>
             </div>
@@ -530,11 +571,17 @@ function Calculator(props) {
                     emailTooltip,
                     setEmailTooltip,
                 }}
+                name={options.projectName}
+                setName={options.setProjectName}
                 click={(e) => sendMail(data, e)}
                 close={closeModal}
-                name={options.projectName}
                 />
             }
+                {
+                    isSuccessEmail &&
+                    <SuccessModal options={{isSuccessEmail, setIsSuccessEmail}}/>
+                }
+            </div>
         </form>
       );
 }

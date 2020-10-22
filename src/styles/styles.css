@@ -83,6 +83,12 @@ body {
      grid-template-columns: 1fr 1fr;
  }
 
+.calculator-table {
+    max-height: 800px;
+    display: grid;
+    place-self: center;
+}
+
 .calculator-table_block_title {
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
@@ -225,8 +231,12 @@ body {
 
 .setting-table {
     background-color: #F2C94C;
-    padding: 130px 110px;
+    padding: 80px 110px;
     opacity: 0;
+    display: grid;
+    /*flex-direction: column;*/
+    place-content: center;
+
     /*position: relative;*/
     /*right: 0;*/
     /*height: 100vh;*/
@@ -235,9 +245,10 @@ body {
 .settings-table_block {
     width: 505px;
     margin: 0 auto;
-    height: 100%;
-    display: grid;
-    place-content: center;
+    max-height: 680px;
+    height: 680px;
+    /*justify-content: center;*/
+    /*align-content: center;*/
 }
 
 .settings-table_item-name {
@@ -690,7 +701,7 @@ button:focus {
 }
 
 .calculator-table_block {
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 .calculator-table_item.days {
@@ -723,7 +734,7 @@ button:focus {
 }
 
 .calculator-table_row.first-row {
-    margin-top: 15px;
+    margin-top: 5px;
 }
 
 /*************** outsource checkbox ***************/
@@ -768,11 +779,20 @@ button:focus {
 
 /* widthter screen */
 
+
+
 @media (max-width: 1440px) {
     .settings-table_block {
         /*width: initial;*/
     }
+
+    .calculator-table {
+        padding: 50px 110px;
+        max-height: 800px;
+        margin: 0 auto;
+    }
 }
+
 
 /* make smaller height of screen*/
 @media (max-height: 846px) {
@@ -790,7 +810,7 @@ button:focus {
     }
 
     .settings-table_item:not(:first-of-type) {
-        margin-top: 40px;
+        margin-top: 30px;
     }
 
     .actions-block {
@@ -802,7 +822,7 @@ button:focus {
     }
 
     .calculator-table_block {
-        margin-top: 10px;
+        margin-top: 5px;
     }
 
     .calculator-table_row.first-row {
@@ -817,6 +837,22 @@ button:focus {
     .actions-calc_block {
         margin-top: 20px;
     }
+}
+
+@media (max-width: 1115px) and (max-height: 846px) {
+
+    body > div {
+        visibility: hidden;
+    }
+
+    body {
+        background-image: url('https://cdn11.bigcommerce.com/s-10c6f/products/298/images/454/FS_STOP_DoNotEnter__20219.1332884610.450.450.jpg?c=2');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+    }
+
+
 }
 
 .none {
@@ -891,9 +927,29 @@ button:focus {
     filter: drop-shadow(0px -3px 8px rgba(0, 0, 0, 0.4)) !important;
 }
 
+.popup-content {
+    border-radius: 0% !important;
+    width: 93px !important;
+    padding: 10px 16px  !important;
+    left: 1082px;
+}
+
+/*.MuiTooltip-tooltip.MuiTooltip-tooltipPlacementLeft {*/
+/*    top: -100px;*/
+/*    !*will-change: none !important;*!*/
+/*    !*transform: none !important;*!*/
+/*}*/
+
+/*.MuiTooltip-popper {*/
+/*    top: 100px !important;*/
+/*    will-change: top !important;*/
+/*}*/
+
 .MuiTooltip-tooltipPlacementBottom,
 .MuiTooltip-tooltipPlacementTop,
-.MuiTooltip-tooltipPlacementRight {
+.MuiTooltip-tooltipPlacementRight,
+.MuiTooltip-tooltipPlacementLeft,
+.popup-content {
     font-family: Fragolino !important;
     font-weight: 400 !important;
     font-size: 14px !important;
@@ -911,7 +967,7 @@ button:focus {
 }
 
 .MuiTooltip-tooltipPlacementTop {
-    left: 91%;
+    left: 78% !important;
     width: 170px !important;
     display: grid;
     place-items: center;
@@ -931,8 +987,42 @@ button:focus {
     top: calc(50% - 0.5em) !important;
 }
 
+.MuiTooltip-tooltipPlacementLeft > span {
+    transform: rotate(225deg);
+    right: 4px !important;
+    top: calc(50% - 0.9em) !important;
+}
 
-/***************** Footnote ********************/
+.popup-content {
+    z-index: 9999999 !important;
+}
+
+@keyframes trambling-animation {
+    0%, 50%, 100% {
+        transform: rotate(0deg);
+    }
+    10%, 30% {
+        transform: rotate(-2deg);
+    }
+    20%, 40% {
+        transform: rotate(2deg);
+    }
+}
+
+.tramble {
+    animation: 1s ease-in-out 0s normal none running trambling-animation;
+}
+
+.salary-table_item-input-text {
+    position: relative;
+    left: 25px;
+    margin-left: 25px;
+    /*width: 200px;*/
+    font-size: 12px;
+}
+
+
+    /***************** Footnote ********************/
 
 
 .footnote {

@@ -1,0 +1,23 @@
+.kitten {
+  height: 148px;
+  width: 173px;
+  background-image: url('../../images/cat.svg');
+  background-repeat: no-repeat;
+  background-size: 173px 148px;
+  background-position: center;
+  margin: 0 auto;
+}
+
+.modal-success {
+  width: 628px;
+  height: 318px;
+  background: #F2F2F2;
+  padding-top: 48px;
+  display: grid;
+  place-items: center;
+}
+
+.success-popup-title {
+  font-size: 20px;
+  line-height: 26px;
+}
