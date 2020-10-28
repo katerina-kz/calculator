@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Modal from 'react-awesome-modal';
 import {Tooltip} from "@material-ui/core";
 
@@ -28,7 +28,7 @@ function SaveModal(props) {
                 <div className='save-popup-title'>Send to e-mail</div>
                 <label htmlFor='email-id' className='save-label'></label>
                 <Tooltip className='platform_tooltip' open={options.emailTooltip} TransitionProps={{timeout: 600}}
-                         placement="top" title="Contains unacceptable characters" arrow={true}>
+                         placement="top-start" title="Contains unacceptable characters" arrow={true}>
                     <input
                         className='email-input number-input'
                         type='text'

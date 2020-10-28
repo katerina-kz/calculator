@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import TextField from '@material-ui/core/TextField';
 import { useForm } from "react-hook-form";
 import Modal from 'react-awesome-modal';
 import {Tooltip} from "@material-ui/core";
-import {Popup} from 'reactjs-popup';
 
 function SalaryInputs(props) {
     const { options } = props;
@@ -35,8 +33,19 @@ function SalaryInputs(props) {
         });
     };
 
-    const onChange = (set, e) => {
+    const onChangeInhouseSalaries = (set, e) => {
         setIsEmptySalaries(false);
+        handleTooltipsFalse();
+        set('');
+        let value = e.target.value;
+        if (isNaN(value)) {
+            set(value.replace(/[^\d]/g, ''));
+        } else {
+            set(value);
+        }
+    }
+
+    const onChange = (set, e) => {
         handleTooltipsFalse();
         set('');
         let value = e.target.value;
@@ -69,11 +78,16 @@ function SalaryInputs(props) {
     };
 
     const closeModal = () => {
+        if (isEmptySalaries) {
+            return
+        }
         if ( options.isOutsourceFill.visualizer || options.isOutsourceFill.modelerForBuild || options.isOutsourceFill.modelerForEnv) {
+            setTimeout(() => {
+                options.setIsCalcModalVisible(false);
+                document.querySelector('.calculator-table').nextElementSibling.style.display = 'none';
+            }, 400);
             handleTooltipsFalse();
             handleChecked();
-            document.querySelector('.calculator-table').nextElementSibling.style.display = 'none';
-            options.setIsCalcModalVisible(false);
            // document.querySelector('.MuiTooltip-tooltipPlacementBottom').classList.add('tramble'); // TODO If checkbox doesn't work correct
         } else {
             handleChecked();
@@ -112,7 +126,7 @@ function SalaryInputs(props) {
                             id='developer-Salary-Inhouse'
                             placeholder='-'
                             value={options.developerSalaryInhouse}
-                            onChange={(e) => onChange(options.setDeveloperSalaryInhouse, e)}
+                            onChange={(e) => onChangeInhouseSalaries(options.setDeveloperSalaryInhouse, e)}
                         />
                         </Tooltip>
                     </div>
@@ -128,7 +142,7 @@ function SalaryInputs(props) {
                             placeholder='-'
                             id='designer-Salary-Inhouse'
                             value={options.designerSalaryInhouse}
-                            onChange={(e) => onChange(options.setDesignerSalaryInhouse, e)}
+                            onChange={(e) => onChangeInhouseSalaries(options.setDesignerSalaryInhouse, e)}
                         />
                     </div>
                     <div className="salary-table_item-input salary-table_item-input-text">No one can replace our designers</div>
@@ -154,10 +168,10 @@ function SalaryInputs(props) {
                         <input
                             className='salary-input-inhouse number-input'
                             type='text'
-                            placeholder='0'
+                            placeholder='-'
                             id='modeler-Salary-Inhouse'
                             value={options.modelerSalaryInhouse}
-                            onChange={(e) => onChange(options.setModelerSalaryInhouse, e)}
+                            onChange={(e) => onChangeInhouseSalaries(options.setModelerSalaryInhouse, e)}
                         />
                     </div>
                     <div className="salary-table_item-input input-outsource">
@@ -167,7 +181,7 @@ function SalaryInputs(props) {
                             <input
                                 className='salary-input-outsource number-input'
                                 type='text'
-                                placeholder='0'
+                                placeholder='-'
                                 id='modeler-Salary-Outsource'
                                 value={options.modelerSalaryOutsource}
                                 onChange={(e) => onChange(options.setModelerSalaryOutsource, e)}
@@ -182,10 +196,10 @@ function SalaryInputs(props) {
                         <input
                             className='salary-input-inhouse number-input'
                             type='text'
-                            placeholder='0'
+                            placeholder='-'
                             id='visualizer-Salary-Inhouse'
                             value={options.visualizerSalaryInhouse}
-                            onChange={(e) => onChange(options.setVisualizerSalaryInhouse, e)}
+                            onChange={(e) => onChangeInhouseSalaries(options.setVisualizerSalaryInhouse, e)}
                         />
                     </div>
                     <div className="salary-table_item-input input-outsource">
@@ -195,7 +209,7 @@ function SalaryInputs(props) {
                             <input
                                 className='salary-input-outsource number-input'
                                 type='text'
-                                placeholder='0'
+                                placeholder='-'
                                 id='visualizer-Salary-Outsource'
                                 value={options.visualizerSalaryOutsource}
                                 onChange={(e) => onChange(options.setVisualizerSalaryOutsource, e)}
@@ -209,7 +223,7 @@ function SalaryInputs(props) {
                             <input
                                 className='salary-input-outsource number-input'
                                 type='text'
-                                placeholder='0'
+                                placeholder='-'
                                 // id='developer-Salary-Outsource' // change  !!!
                                 // value={options.visualizerSalaryOutsource} // change  !!!
                                 // onChange={(e) => onChange(options.visualizerSalaryOutsource, e)}  // change !!!

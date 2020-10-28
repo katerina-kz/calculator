@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Tooltip, Fade} from '@material-ui/core';
+import {Tooltip} from '@material-ui/core';
 import EnvironmentInput from "./inputs_modules/EnvironmentInput";
 import FacadeInputs from "./inputs_modules/FacadeInputs";
-import FurnishingInput from "./inputs_modules/FurnishingInput";
 
 function ProjectFeaturesInputs(props) {
     const { options, clear } = props;
@@ -43,7 +42,7 @@ function ProjectFeaturesInputs(props) {
     }, [options.buildingsCount, options.uniqueBuildings, options.uniqueApartment, options.tourApartments, options.tourAmenities])
 
     useEffect(() => {
-        options.platformInput === 0 ?setOpen({...open, platform: true}) : setOpen({...open, platform: false});
+        options.platformInput === 0 ? setOpen({...open, platform: true}) : setOpen({...open, platform: false});
     }, [options.platformInput]);
 
     useEffect( () => {
@@ -56,11 +55,10 @@ function ProjectFeaturesInputs(props) {
     const onChangeProjectName = (e) => options.setProjectName(e.target.value);
 
     useEffect(() => {
+        options.setIsSaveDisabled(false);
         Object.values(open).find(value => {
             if (value === true) {
-                options.setIsSaveDisabled(true);
-            } else {
-                options.setIsSaveDisabled(false);
+                return options.setIsSaveDisabled(true);
             }
         })
     }, [open]);
@@ -225,20 +223,14 @@ function ProjectFeaturesInputs(props) {
                 ...open,
                 uniqueApartment: false,
             });
-        // } else {
-        //     setOpen({
-        //         'buildingsCount': false,
-        //         'uniqueBuildings': false,
-        //         'uniqueApartment': false,
-        //         'tourApartments': false,
-        //         'tourAmenities': false,
-        //     });
         }
-    }
+    };
 
     const onChange360 = (set, obj, e) => {
         set('');
         let value = e.target.value;
+        // debugger
+        // let pattern = /0[\d]/g;
         if (isNaN(value)) {
             setOpen({
                 ...open,
@@ -246,8 +238,14 @@ function ProjectFeaturesInputs(props) {
             });
             set(value.replace(/[^\d]/g, ''));
             setOpenTooltipText({...openTooltipText, [obj]: "Contains unacceptable characters"});
+        // } else if (pattern.test(parseInt(value))) {
+        //     set(value.replace(/[^\d]/g, ''));
         } else {
-            set(value.replace(/[^\d]/g, ''));
+            if (!value) {
+                set(value.replace(/[^\d]/g, ''));
+            } else {
+                set(+value);
+            }
             setOpen({
                 ...open,
                 'tourApartments': false,
@@ -266,7 +264,6 @@ function ProjectFeaturesInputs(props) {
             });
             set(value.replace(/[^\d]/g, ''));
             setOpenTooltipText({...openTooltipText, [obj]: "Contains unacceptable characters"});
-
         } else if (parseInt(value) === 0 || !value) {
             if (obj !== 'tourApartments' && obj !== 'tourAmenities') {
                 setOpen({
@@ -282,6 +279,19 @@ function ProjectFeaturesInputs(props) {
             lessThanMore(obj, value);
         }
     };
+
+    useEffect(() => {
+        if (+options.uniqueBuildings <= +options.buildingsCount) {
+            if (openTooltipText.buildingsCount === "Can't be less than 'Unique Buildings'" || openTooltipText.uniqueBuildings === "Can't be more than 'Buildings total'") {
+                setOpen({
+                    ...open,
+                    buildingsCount: false,
+                    uniqueBuildings: false
+                });
+            }
+            return;
+        }
+    }, [options.uniqueBuildings, options.buildingsCount])
 
 
     const onClick = (classLabel, classInput, state, set) => {
@@ -307,9 +317,9 @@ function ProjectFeaturesInputs(props) {
     };
 
     const onBlur360 = (state, set, className, obj) => {
-        if (!state) document.querySelector(className).classList.remove('top');
         if (state === '') {
             set('');
+            document.querySelector(className).classList.remove('top');
             setOpen({
                 ...open,
                 'tourApartments': false,
@@ -332,6 +342,10 @@ function ProjectFeaturesInputs(props) {
             setOpenTooltipText({...openTooltipText, [obj]:'Has to be more than 0'});
             setOpen({...open, [obj]: true});
         } else {
+            // console.log(options.isSaveDisabled)
+            if (options.isSaveDisabled) {
+                return
+            }
             setOpen({...open, [obj]: false});
             set(state);
         }

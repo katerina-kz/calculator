@@ -2,7 +2,7 @@
     font-family: 'fragolino';
     font-weight: 300;
     font-style: normal;
-    src: url("../fonts/fragolino/FragolinoLight.eot");
+    src: url("../fonts/fragolino/FragolinoLight.eot") format("embedded-opentype");
     src: url("../fonts/fragolino/FragolinoLight.eot?#iefix") format("embedded-opentype"), url("../fonts/fragolino/FragolinoLight.woff2") format("woff2"), url("../fonts/fragolino/FragolinoLight.ttf") format("truetype");
 }
 
@@ -40,6 +40,16 @@
     font-style: normal;
     src: url("../fonts/fragolino/FragolinoCondBold.eot") format("embedded-opentype");
     src: url("../fonts/fragolino/FragolinoCondBold.eot?#iefix") format("embedded-opentype"), url("../fonts/fragolino/FragolinoCondBold.woff2") format("woff2"), url("../fonts/fragolino/FragolinoCondBold.ttf") format("truetype"); }
+
+
+@font-face {
+    font-family: 'fragolino-otf';
+    font-weight: 400;
+    font-style: normal;
+    src: url("../fonts/fragolino/FragolinoLight.otf") format("embedded-opentype");
+}
+
+
 
 body {
     box-sizing: border-box;
@@ -668,6 +678,7 @@ button:focus {
 
 .month-text-int {
     font-family: 'fragolino';
+    width: 100%;
     font-weight: 700;
     font-size: 36px;
     line-height: 38px;
@@ -679,12 +690,24 @@ button:focus {
     font-weight: 400;
     font-size: 18px;
     line-height: 23px;
-    /* identical to box height */
-
+    width: 100%;
     letter-spacing: 0.03em;
 }
 
 .total-cost {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    display: inline-block;
+    font-family: 'fragolino';
+    font-weight: 700;
+    font-size: 72px;
+    line-height: 76px;
+    text-align: center;
+    letter-spacing: 0.03em;
+
+}
+
+.total-cost-dollar {
     font-family: 'fragolino';
     font-weight: 700;
     font-size: 72px;
@@ -927,6 +950,14 @@ button:focus {
     filter: drop-shadow(0px -3px 8px rgba(0, 0, 0, 0.4)) !important;
 }
 
+div[x-placement=top-start] {
+    left: -125px !important;
+}
+
+div[x-placement=top-start] > div > .MuiTooltip-arrow {
+    left: 90px !important;
+}
+
 .popup-content {
     border-radius: 0% !important;
     width: 93px !important;
@@ -1071,4 +1102,42 @@ button:focus {
 /*         font-size: 12px;*/
 /*         line-height: 15px;*/
 /*  }*/
+/*}*/
+
+/*@media (orientation: landscape) and (max-height: 414px)  {*/
+/*    body {*/
+/*        position: relative;*/
+/*        z-index: 1;*/
+/*    }*/
+
+/*    body::after {*/
+/*        position: absolute;*/
+/*        z-index: 999999;*/
+/*        width: 100%;*/
+/*        height: 100%;*/
+/*        top: 0;*/
+/*        left: 0;*/
+/*        content: '';*/
+/*        background-color: #1A2F43;*/
+/*        color: #fff;*/
+/*        background-image: url("../img/landscape.svg");*/
+/*        background-repeat: no-repeat;*/
+/*        background-position: center;*/
+
+/*    }*/
+
+/*    body::before {*/
+/*        content: 'Please turn your device';*/
+/*        z-index: 9999999;*/
+/*        position: absolute;*/
+/*        font-family: Fragolino;*/
+/*        font-weight: 700;*/
+/*        font-size: 18px;*/
+/*        width: 100%;*/
+/*        height: 100%;*/
+/*        line-height: 23px;*/
+/*        text-align: center;*/
+/*        top: 72%;*/
+/*        color: #fff;*/
+/*    }*/
 /*}*/

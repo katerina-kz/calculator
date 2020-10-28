@@ -6,12 +6,8 @@ import '../styles/scss/style.scss';
 import Calculator from "./Calculator";
 import SalaryInputs from "./components/modals/SalaryInputs";
 import { useLocalStorage } from "./hooks/useLocalStorage";
-import { useDataFromStorage } from "./hooks/useDataFromStorage";
-import { useGlobalObject } from "./hooks/useGlobalObject";
 
 function MainTable() {
-
-    // project
     const [projectName, setProjectName] = useState('');
     const [platform, setPlatform] = useLocalStorage('platform', {
         "1": 0,
@@ -135,8 +131,17 @@ function MainTable() {
 
     useEffect(() => {
         if (document.querySelector('.complexity-examples') !== null) {
-            document.querySelector('.complexity-examples').classList.remove('middle', 'max', 'simple', 'easy-env', 'normal-env', 'hardcore-env');
-            document.querySelector('.complexity-examples').classList.add(classBlock);
+            document.querySelector('.complexity-examples').classList.add('scaleTo');
+            setTimeout(() => {
+                document.querySelector('.complexity-examples').classList.remove('middle', 'max', 'simple', 'easy-env', 'normal-env', 'hardcore-env');
+            }, 200)
+            setTimeout(() => {
+                document.querySelector('.complexity-examples').classList.add(classBlock);
+                document.querySelector('.complexity-examples').classList.add('scaleFrom');
+            }, 200);
+            setTimeout(() => {
+                document.querySelector('.complexity-examples').classList.remove('scaleTo', 'scaleFrom');
+            }, 600)
         }
     }, [classBlock]);
 

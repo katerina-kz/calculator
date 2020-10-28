@@ -1,9 +1,11 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 
 function FacadeInputs(props) {
     const {buildingComplexity, setBuildingComplexity, setLoaderBlock, setComplexity, setClassBlock } = props;
 
-    const onChangeBuildingComplexity = (e) => setBuildingComplexity(e.target.value);
+    const onChangeBuildingComplexity = (e) => {
+        setBuildingComplexity(e.target.value);
+    };
 
     const handleClick = (className) => {
         if (document.querySelector('.calculator-table').classList.contains('none')) {

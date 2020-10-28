@@ -1,8 +1,7 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import SaveModal from "./components/modals/SaveModal";
 import {useLocalStorage} from "./hooks/useLocalStorage";
 import SuccessModal from "./components/modals/SuccessModal";
-import Modal from "react-awesome-modal";
 
 function Calculator(props) {
     const { options } = props;
@@ -12,12 +11,12 @@ function Calculator(props) {
     const [emailTooltip, setEmailTooltip] = useState(false);
     const [isSuccessEmail, setIsSuccessEmail] = useState(false);
 
-
     const openModalCalc = (e) => {
         e.preventDefault();
         document.querySelector('.calculator-table').nextElementSibling.style.display = 'block';
+        document.querySelector('.calculator-table').nextElementSibling.style.position = 'absolute';
         options.setIsCalcModalVisible(true);
-    }
+    };
 
     const openModalSave = (e) => {
         e.preventDefault();
@@ -25,15 +24,15 @@ function Calculator(props) {
             return;
         } else {
             document.querySelector('.actions-calc_block').nextElementSibling.style.display = 'block';
+            document.querySelector('.calculator-table').nextElementSibling.style.position = 'absolute';
             setIsSaveModalVisible(true);
         }
-
-    }
+    };
 
     const closeModal = () => {
         document.querySelector('.actions-calc_block').nextElementSibling.style.display = 'none';
         setIsSaveModalVisible(false);
-    }
+    };
 
 
     const calculateDays = (opt) => {
@@ -100,7 +99,7 @@ function Calculator(props) {
             case 'total development':
                 return handleDevCostTotal();
             case 'total cost':
-                return options.developerSalaryInhouse === "" ? 0 : handleProjectTotalCost();
+                return options.developerSalaryInhouse === "" ? 0 : totalSum === prevTotalSum ? totalSum : handleProjectTotalCost();
         }
     };
 
@@ -229,9 +228,9 @@ function Calculator(props) {
         if (options.buildingComplexity === 'Simple geometrical shape') {
             return 1;
         } else if (options.buildingComplexity === 'Moderately complex exterior') {
-            return 1.5;
-        } else if (options.buildingComplexity === 'Baroque edifice') {
             return 2;
+        } else if (options.buildingComplexity === 'Baroque edifice') {
+            return 3;
         }
     };
 
@@ -285,57 +284,52 @@ function Calculator(props) {
         return (
             build+env+des+mod
         )
-    }
+    };
 
     const handleDevCostTotal = () => {
        return (Math.ceil((options.platformInput*5)*(options.developerSalaryInhouse/22)))*3;
+    };
+
+    // func for running digits
+    const easeOutQuart = (t, b, c, d) => {
+        return -c * (( t = t / d - 1) * t * t * t - 1) + b;
+    };
+
+    function usePrevious(value) {
+        const ref = useRef();
+        useEffect(() => {
+            ref.current = value;
+        }, [value]);
+        return ref.current;
     }
 
+    const totalSum = (handleVisCostTotal()+handleModCostTotal()+handleDevCostTotal())*1.5;
+    const prevTotalSum = usePrevious(totalSum);
+
     const handleProjectTotalCost = () => {
-        const totalSum = (handleVisCostTotal()+handleModCostTotal()+handleDevCostTotal())*1.5;
-        // ------------------------------------------------------------------------------------------ !!! TOGO показать Оле эту жуть !!!
+        const time = {
+                total: 2000,
+                start: performance.now()
+            };
+            const tick = now => {
+                const elapsed = now - time.start,
+                    progress = easeOutQuart(elapsed, 0, 1, time.total);
 
-        // const time = 2000;
-        // const step = 0.5;
-        // console.log(totalSum, step);
-        // let initial = 0;
-        // //
-        // let t = Math.round(time/(totalSum/step));
-        // // console.log(totalSum);
-        // let interval = setInterval(() => {
-        //     // debugger
-        //     initial = initial + step;
-        //     // console.log(initial);
-        //     if (initial >= totalSum) {
-        //         // console.log(initial);
-        //
-        //         clearInterval(interval);
-        //     }
-        //     if (document.querySelector('.total-cost')) document.querySelector('.total-cost').innerHTML = initial;
-        //
-        // }, t);
-        // // console.log(initial);
-
-        return totalSum;
+                document.querySelectorAll('.total-cost').forEach(s => s.textContent = Math.round(progress * totalSum).toLocaleString())
+                if (elapsed < time.total) {
+                    return window.requestAnimationFrame(tick)
+                }
+            };
+            window.requestAnimationFrame(tick);
     };
-    //
-    // const data = {
-    //     // projectName: '';
-    //     Total: {
-    //         costs: calculateCost('total cost'),
-    //         days: calculateDays('total days'),
-    //         month: calculateDays('total month'),
-    //     },
-    //     Platforms: options.platformInput, //  --------------------------------------- change!!!!!!!!
-    //     'Buildings total': options.buildingsCount,
-    //     'Unique buildings': options.uniqueBuildings,
-    //     'Unique apartments': options.uniqueApartment,
-    //     'Facade complexity': options.buildingComplexity,
-    //     '360 apt tours': options.tourApartments,
-    //     '360 amenities tours': options.tourAmenities,
-    //     'Environment complexity': options.environmentComplexity,
-    //
-    // }
+
+    useEffect(() => {
+            if (parseInt(options.uniqueBuildings) > parseInt(options.buildingsCount)) {
+               options.setIsSaveDisabled(true);
+            } else {
+                options.setIsSaveDisabled(false);
+            }
+    }, [options.uniqueBuildings, options.buildingsCount]);
 
     const data = {
         projectName: options.projectName,
@@ -437,7 +431,7 @@ function Calculator(props) {
                     <div className="calculator-days-amount">({calculateDays('total days')} work days)</div>
                 </div>
                 <div className='total-price-box'>
-                    <div className="calculator-table_item total-cost">${calculateCost('total cost')}</div>
+                    <span className='total-cost-dollar'>$</span><div className="calculator-table_item total-cost">{calculateCost('total cost')}</div>
                 </div>
             </div>
 

@@ -1,3 +1,29 @@
+@keyframes scaleTo {
+    0% {
+      transform: scaleX(1);
+    }
+    100% {
+      transform: scaleX(0.1);
+    }
+}
+
+@keyframes scaleFrom {
+  0% {
+    transform: scaleX(0.1);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+.scaleTo {
+  animation: scaleTo 0.2s ease-in-out;
+}
+
+.scaleFrom {
+  animation: scaleFrom 0.2s ease-in-out;
+}
+
 .complexity-examples {
   background-position: center;
   background-repeat: no-repeat;
@@ -31,7 +57,9 @@
   &.hardcore-env {
     background-image: url("../../images/hardcore-env.svg");
     background-size: 500px;
-
   }
+
 }
+
+
 

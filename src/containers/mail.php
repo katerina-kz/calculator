@@ -13,8 +13,7 @@ $recepient = $data['Email'];
 
 $message = "<div>
   <div>
-    <h1>" . $data['projectName']. "</h2>
-    <br/>
+    <h1>Project name: " . $data['projectName']. "</h2>
     <br/>
     <p>Total: <b>" . $data['Total']['costs']. "</b></p>
     <p><i>" . $data['Total']['month']. " months (" . $data['Total']['days']. " work days)</i></p>
