@@ -66,7 +66,7 @@ function Calculator(props) {
             case 'total days':
                 return handleProjectTotal();
             case 'total month':
-                return Math.round((handleProjectTotal()/22) * 2) / 2;
+                return Math.ceil((handleProjectTotal()/22) * 2) / 2;
         }
     }
 
